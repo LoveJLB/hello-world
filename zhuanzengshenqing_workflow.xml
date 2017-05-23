@@ -1,0 +1,105 @@
+<openerp>
+    <data>
+        <record model="workflow" id="wkf_zhuanzhengshenqing">
+            <field name="name">zhuanzhengshenqing workflow</field>
+            <field name="osv">zhuanzhengshenqing</field>
+            <field name="on_create">True</field>
+        </record>
+
+        <record model="workflow.activity" id="zhuanzhengshenqing_draft">
+            <field name="name">个人自我鉴定</field>
+            <field name="wkf_id" ref="wkf_zhuanzhengshenqing"/>
+            <field name="flow_start" eval="True"/>
+            <field name="kind">function</field>
+            <field name="action">action_draft()</field>
+        </record>
+        <record model="workflow.activity" id="zhuanzhengshenqing_confirmed">
+            <field name="name">直接上级评价评价</field>
+            <field name="wkf_id" ref="wkf_zhuanzhengshenqing"/>
+            <field name="kind">function</field>
+            <field name="action">action_confirm()</field>
+        </record>
+        <record model="workflow.activity" id="zhuanzhengshenqing_confirmedt">
+            <field name="name">部长审核</field>
+            <field name="wkf_id" ref="wkf_zhuanzhengshenqing"/>
+            <field name="kind">function</field>
+            <field name="action">action_confirmt()</field>
+        </record>
+        <record model="workflow.activity" id="zhuanzhengshenqing_confirmedh">
+            <field name="name">分管领导审核</field>
+            <field name="wkf_id" ref="wkf_zhuanzhengshenqing"/>
+            <field name="kind">function</field>
+            <field name="action">action_confirmh()</field>
+        </record>
+        <record model="workflow.activity" id="zhuanzhengshenqing_confirmedf">
+            <field name="name">人力资源部审核</field>
+            <field name="wkf_id" ref="wkf_zhuanzhengshenqing"/>
+            <field name="kind">function</field>
+            <field name="action">action_confirmf()</field>
+        </record>
+        <record model="workflow.activity" id="zhuanzhengshenqing_done">
+            <field name="name">审批完成</field>
+            <field name="wkf_id" ref="wkf_zhuanzhengshenqing"/>
+            <field name="kind">function</field>
+            <field name="action">action_done()</field>
+        </record>
+
+
+
+        <record model="workflow.transition" id="zhuanzhengshenqing_draft_to_confirmed">
+            <field name="act_from" ref="zhuanzhengshenqing_draft"/>
+            <field name="act_to" ref="zhuanzhengshenqing_confirmed"/>
+            <field name="signal">confirm</field>
+        </record>
+        <record model="workflow.transition" id="zhuanzhengshenqing_confirmed_to_draft">
+            <field name="act_from" ref="zhuanzhengshenqing_confirmed"/>
+            <field name="act_to" ref="zhuanzhengshenqing_draft"/>
+            <field name="signal">draft</field>
+        </record>
+        <record model="workflow.transition" id="zhuanzhengshenqing_confirmed_to_confirmedt">
+            <field name="act_from" ref="zhuanzhengshenqing_confirmed"/>
+            <field name="act_to" ref="zhuanzhengshenqing_confirmedt"/>
+            <field name="signal">confirm</field>
+        </record>
+        <record model="workflow.transition" id="zhuanzhengshenqing_confirmedt_to_confirmed">
+            <field name="act_from" ref="zhuanzhengshenqing_confirmedt"/>
+            <field name="act_to" ref="zhuanzhengshenqing_confirmed"/>
+            <field name="signal">draft</field>
+        </record>
+        <record model="workflow.transition" id="zhuanzhengshenqing_confirmedt_to_confirmedh">
+            <field name="act_from" ref="zhuanzhengshenqing_confirmedt"/>
+            <field name="act_to" ref="zhuanzhengshenqing_confirmedh"/>
+            <field name="signal">confirm</field>
+        </record>
+        <record model="workflow.transition" id="zhuanzhengshenqing_confirmedh_to_confirmedt">
+            <field name="act_from" ref="zhuanzhengshenqing_confirmedh"/>
+            <field name="act_to" ref="zhuanzhengshenqing_confirmedt"/>
+            <field name="signal">draft</field>
+        </record>
+        <record model="workflow.transition" id="zhuanzhengshenqing_confirmedh_to_confirmedf">
+            <field name="act_from" ref="zhuanzhengshenqing_confirmedh"/>
+            <field name="act_to" ref="zhuanzhengshenqing_confirmedf"/>
+            <field name="signal">confirm</field>
+        </record>
+        <record model="workflow.transition" id="zhuanzhengshenqing_confirmedf_to_confirmeht">
+            <field name="act_from" ref="zhuanzhengshenqing_confirmedf"/>
+            <field name="act_to" ref="zhuanzhengshenqing_confirmedh"/>
+            <field name="signal">draft</field>
+        </record>
+
+        <record model="workflow.transition" id="zhuanzhengshenqing_done_to_confirmedf">
+            <field name="act_from" ref="zhuanzhengshenqing_done"/>
+            <field name="act_to" ref="zhuanzhengshenqing_confirmedf"/>
+            <field name="signal">draft</field>
+        </record>
+        <record model="workflow.transition" id="zhuanzhengshenqing_confirmedf_to_done">
+            <field name="act_from" ref="zhuanzhengshenqing_confirmedf"/>
+            <field name="act_to" ref="zhuanzhengshenqing_done"/>
+            <field name="signal">done</field>
+        </record>
+
+
+
+
+    </data>
+</openerp>

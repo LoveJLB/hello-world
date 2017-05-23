@@ -1,0 +1,56 @@
+<openerp>
+    <data>
+        <record model="workflow" id="wkf_hetong">
+            <field name="name">Hetong workflow</field>
+            <field name="osv">hetong</field>
+            <field name="on_create">True</field>
+        </record>
+
+        <record model="workflow.activity" id="hetong_draft">
+            <field name="name">合同创建</field>
+            <field name="wkf_id" ref="wkf_hetong"/>
+            <field name="flow_start" eval="True"/>
+            <field name="kind">function</field>
+            <field name="action">action_draft()</field>
+        </record>
+        <record model="workflow.activity" id="hetong_confirmed">
+            <field name="name">人力资源部部长审批</field>
+            <field name="wkf_id" ref="wkf_hetong"/>
+            <field name="kind">function</field>
+            <field name="action">action_confirm()</field>
+        </record>
+        <record model="workflow.activity" id="hetong_done">
+            <field name="name">审批完成</field>
+            <field name="wkf_id" ref="wkf_hetong"/>
+            <field name="kind">function</field>
+            <field name="action">action_done()</field>
+        </record>
+
+
+
+        <record model="workflow.transition" id="hetong_draft_to_confirmed">
+            <field name="act_from" ref="hetong_draft"/>
+            <field name="act_to" ref="hetong_confirmed"/>
+            <field name="signal">confirm</field>
+        </record>
+        <record model="workflow.transition" id="hetong_confirmed_to_draft">
+            <field name="act_from" ref="hetong_confirmed"/>
+            <field name="act_to" ref="hetong_draft"/>
+            <field name="signal">draft</field>
+        </record>
+        <record model="workflow.transition" id="hetong_done_to_confirmed">
+            <field name="act_from" ref="hetong_done"/>
+            <field name="act_to" ref="hetong_confirmed"/>
+            <field name="signal">draft</field>
+        </record>
+        <record model="workflow.transition" id="hetong_confirmed_to_done">
+            <field name="act_from" ref="hetong_confirmed"/>
+            <field name="act_to" ref="hetong_done"/>
+            <field name="signal">done</field>
+        </record>
+
+
+
+
+    </data>
+</openerp>

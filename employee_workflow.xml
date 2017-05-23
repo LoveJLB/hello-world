@@ -1,0 +1,72 @@
+<openerp>
+    <data>
+        <record model="workflow" id="wkf_employee">
+            <field name="name">Employee workflow</field>
+            <field name="osv">hr.employee</field>
+            <field name="on_create">True</field>
+        </record>
+
+        <record model="workflow.activity" id="employee_draft">
+            <field name="name">个人信息创建</field>
+            <field name="wkf_id" ref="wkf_employee"/>
+            <field name="flow_start" eval="True"/>
+            <field name="kind">function</field>
+            <field name="action">action_draft()</field>
+        </record>
+        <record model="workflow.activity" id="employee_confirmed">
+            <field name="name">人力专员审批</field>
+            <field name="wkf_id" ref="wkf_employee"/>
+            <field name="kind">function</field>
+            <field name="action">action_confirm()</field>
+        </record>
+        <record model="workflow.activity" id="employee_confirmedt">
+            <field name="name">部门经理审批</field>
+            <field name="wkf_id" ref="wkf_employee"/>
+            <field name="kind">function</field>
+            <field name="action">action_confirmt()</field>
+        </record>
+        <record model="workflow.activity" id="employee_done">
+            <field name="name">审批完成</field>
+            <field name="wkf_id" ref="wkf_employee"/>
+            <field name="kind">function</field>
+            <field name="action">action_done()</field>
+        </record>
+
+
+
+        <record model="workflow.transition" id="employee_draft_to_confirmed">
+            <field name="act_from" ref="employee_draft"/>
+            <field name="act_to" ref="employee_confirmed"/>
+            <field name="signal">confirm</field>
+        </record>
+        <record model="workflow.transition" id="employee_confirmed_to_draft">
+            <field name="act_from" ref="employee_confirmed"/>
+            <field name="act_to" ref="employee_draft"/>
+            <field name="signal">draft</field>
+        </record>
+         <record model="workflow.transition" id="employee_confirmed_to_confirmedt">
+            <field name="act_from" ref="employee_confirmed"/>
+            <field name="act_to" ref="employee_confirmedt"/>
+            <field name="signal">confirm</field>
+        </record>
+        <record model="workflow.transition" id="employee_confirmedt_to_confirmed">
+            <field name="act_from" ref="employee_confirmedt"/>
+            <field name="act_to" ref="employee_confirmed"/>
+            <field name="signal">draft</field>
+        </record>
+        <record model="workflow.transition" id="employee_done_to_confirmedt">
+            <field name="act_from" ref="employee_done"/>
+            <field name="act_to" ref="employee_confirmedt"/>
+            <field name="signal">draft</field>
+        </record>
+        <record model="workflow.transition" id="employee_confirmedt_to_done">
+            <field name="act_from" ref="employee_confirmedt"/>
+            <field name="act_to" ref="employee_done"/>
+            <field name="signal">done</field>
+        </record>
+
+
+
+
+    </data>
+</openerp>

@@ -1,0 +1,155 @@
+<odoo>
+    <data noupdate="0">
+        <record model="ir.module.category" id="module_hr_category">
+            <field name="name" >人力资源策划</field>
+        </record>
+
+        <record id="hr_yuangong" model="res.groups">
+            <field name="name">员工</field>
+            <field name ="category_id" ref="module_hr_category"/>
+            <!--<field name="implied_ids" eval="[(4, ref('base.group_user'))]"/>-->
+            <field name="users" eval="[(4, ref('base.user_root'))]"/>
+            <field name="implied_ids" eval="[(4, ref('base.group_user'))]"/>
+        </record>
+
+        <record id="hr_renlizhuanyuan" model="res.groups">
+            <field name="name">人力专员</field>
+            <field name ="category_id" ref="module_hr_category"/>
+            <!--<field name="implied_ids" eval="[(4, ref('caigouguanli_caigouyuan'))]"/>-->
+            <field name="users" eval="[(4, ref('base.user_root'))]"/>
+            <field name="implied_ids" eval="[(4, ref('base.group_user'))]"/>
+        </record>
+
+        <record id="hr_xingzhengzhuanyuan" model="res.groups">
+            <field name="name">行政专员</field>
+            <field name ="category_id" ref="module_hr_category"/>
+            <!--<field name="implied_ids" eval="[(4, ref('caigouguanli_caigouyuan'))]"/>-->
+            <field name="users" eval="[(4, ref('base.user_root'))]"/>
+            <field name="implied_ids" eval="[(4, ref('base.group_user'))]"/>
+        </record>
+
+        <record id="hr_xinxizhuanyuan" model="res.groups">
+            <field name="name">信息专员</field>
+            <field name ="category_id" ref="module_hr_category"/>
+            <!--<field name="implied_ids" eval="[(4, ref('caigouguanli_caigouyuan'))]"/>-->
+            <field name="users" eval="[(4, ref('base.user_root'))]"/>
+            <field name="implied_ids" eval="[(4, ref('base.group_user'))]"/>
+        </record>
+
+        <record id="hr_renliziyuanbuzhang" model="res.groups">
+            <field name="name">人力资源部部长</field>
+            <field name="category_id" ref="module_hr_category"/>
+            <field name="users" eval="[(4, ref('base.user_root'))]"/>
+            <field name="implied_ids" eval="[(4, ref('base.group_user'))]"/>
+        </record>
+
+        <record id="hr_renliziyuanfenguanfuzong" model="res.groups">
+            <field name="name">人力资源部分管副总</field>
+            <field name="category_id" ref="module_hr_category"/>
+            <field name="users" eval="[(4, ref('base.user_root'))]"/>
+            <field name="implied_ids" eval="[(4, ref('base.group_user'))]"/>
+        </record>
+
+        <record id="hr_zongjingli" model="res.groups">
+            <field name="name">总经理</field>
+            <field name="category_id" ref="module_hr_category"/>
+            <field name="users" eval="[(4, ref('base.user_root'))]"/>
+            <field name="implied_ids" eval="[(4, ref('base.group_user'))]"/>
+        </record>
+
+
+
+         <record id="hr_dongshizhang" model="res.groups">
+            <field name="name">董事长</field>
+            <field name="category_id" ref="module_hr_category"/>
+            <field name="users" eval="[(4, ref('base.user_root'))]"/>
+             <field name="implied_ids" eval="[(4, ref('base.group_user'))]"/>
+        </record>
+
+
+
+</data>
+<data noupdate="1">
+
+        <record model="ir.rule" id="hr.employee_yuangong_rule">
+            <field name="name">员工：只能查看自己的信息</field>
+            <field name="model_id" ref="model_hr_employee"/>
+            <field name="groups" eval="[(4, ref('hr.hr_yuangong'))]"/>
+            <field name="perm_write" eval="0"/><!--csv文件的权限比这里要大-->
+            <field name="perm_unlink" eval="0"/>
+            <field name="perm_create" eval="0"/>
+            <field name="perm_read" eval="1"/>
+            <field name="domain_force">[('user_id.login', '=', user.login)]</field>
+        </record>
+
+         <record model="ir.rule" id="hr.department_yuangong_rule">
+            <field name="name">员工：只能查看自己所属部门</field>
+            <field name="model_id" ref="model_hr_department"/>
+            <field name="groups" eval="[(4, ref('hr.hr_yuangong'))]"/>
+             <field name="domain_force">[('member_ids.user_id.login', '=', user.login)]</field>
+        </record>
+
+        <record model="ir.rule" id="zhengzhao_yuangong_rule">
+            <field name="name">员工：只能查看自己的证照</field>
+            <field name="model_id" ref="model_zhengzhao"/>
+            <field name="groups" eval="[(4, ref('hr.hr_yuangong'))]"/>
+             <field name="domain_force">[('create_uid', '=', user.id)]</field>
+        </record>
+
+        <record model="ir.rule" id="shiyongkaohe_yuangong_rule">
+            <field name="name">员工：只能查看自己的试用考核表</field>
+            <field name="model_id" ref="model_shiyongkaohe"/>
+            <field name="groups" eval="[(4, ref('hr.hr_yuangong'))]"/>
+             <field name="domain_force">[('create_uid', '=', user.id)]</field>
+        </record>
+
+       <record model="ir.rule" id="tiaogang_yuangong_rule">
+            <field name="name">员工：只能查看自己的调岗申请表</field>
+            <field name="model_id" ref="model_tiaogang"/>
+            <field name="groups" eval="[(4, ref('hr.hr_yuangong'))]"/>
+             <field name="domain_force">[('create_uid', '=', user.id)]</field>
+        </record>
+
+        <record model="ir.rule" id="jinsheng_yuangong_rule">
+            <field name="name">员工：只能查看自己的晋升申请表</field>
+            <field name="model_id" ref="model_jinsheng"/>
+            <field name="groups" eval="[(4, ref('hr.hr_yuangong'))]"/>
+             <field name="domain_force">[('create_uid', '=', user.id)]</field>
+        </record>
+
+        <record model="ir.rule" id="gangwei_yuangong_rule">
+            <field name="name">员工：只能查看自己的岗位</field>
+            <field name="model_id" ref="model_gangwei"/>
+            <field name="groups" eval="[(4, ref('hr.hr_yuangong'))]"/>
+             <field name="domain_force">[('yuangong.user_id.login', '=', user.login)]</field>
+        </record>
+        <record model="ir.rule" id="zhize_yuangongn_rule">
+            <field name="name">员工：只能查看自己岗位的职责</field>
+            <field name="model_id" ref="model_zhize"/>
+            <field name="groups" eval="[(4, ref('hr.hr_yuangong'))]"/>
+             <field name="domain_force">[('gangwei.yuangong.user_id.login', '=', user.login)]</field>
+        </record>
+
+        <record model="ir.rule" id="lizhijiaojie_yuangongn_rule">
+            <field name="name">员工：只能查看自己的离职交接单</field>
+            <field name="model_id" ref="model_lizhijiaojie"/>
+            <field name="groups" eval="[(4, ref('hr.hr_yuangong'))]"/>
+             <field name="domain_force">[('create_uid', '=', user.id)]</field>
+        </record>
+        <record model="ir.rule" id="peixun_yuangongn_rule">
+            <field name="name">员工：只能查看自己部门的培训</field>
+            <field name="model_id" ref="model_peixun"/>
+            <field name="groups" eval="[(4, ref('hr.hr_yuangong'))]"/>
+             <field name="domain_force">[('peixunbumen.member_ids.user_id.login', '=', user.login)]</field>
+        </record>
+        <record model="ir.rule" id="zhuanzhengshenqing_yuangongn_rule">
+            <field name="name">员工：只能查看自己的转正申请表</field>
+            <field name="model_id" ref="model_zhuanzhengshenqing"/>
+            <field name="groups" eval="[(4, ref('hr.hr_yuangong'))]"/>
+             <field name="domain_force">[('create_uid', '=', user.id)]</field>
+        </record>
+
+
+
+    </data>
+</odoo>

@@ -1,0 +1,159 @@
+<openerp>
+    <data>
+        <record model="workflow" id="wkf_lizhijiaojie">
+            <field name="name">lizhijiaojie workflow</field>
+            <field name="osv">lizhijiaojie</field>
+            <field name="on_create">True</field>
+        </record>
+
+        <record model="workflow.activity" id="lizhijiaojie_draft">
+            <field name="name">填写离职申请</field>
+            <field name="wkf_id" ref="wkf_lizhijiaojie"/>
+            <field name="flow_start" eval="True"/>
+            <field name="kind">function</field>
+            <field name="action">action_draft()</field>
+        </record>
+        <record model="workflow.activity" id="lizhijiaojie_confirmed">
+            <field name="name">工段长审批</field>
+            <field name="wkf_id" ref="wkf_lizhijiaojie"/>
+            <field name="kind">function</field>
+            <field name="action">action_confirm()</field>
+        </record>
+        <record model="workflow.activity" id="lizhijiaojie_confirmedt">
+            <field name="name">采购部审批</field>
+            <field name="wkf_id" ref="wkf_lizhijiaojie"/>
+            <field name="kind">function</field>
+            <field name="action">action_confirmt()</field>
+        </record>
+        <record model="workflow.activity" id="lizhijiaojie_confirmedh">
+            <field name="name">部长审批</field>
+            <field name="wkf_id" ref="wkf_lizhijiaojie"/>
+            <field name="kind">function</field>
+            <field name="action">action_confirmh()</field>
+        </record>
+        <record model="workflow.activity" id="lizhijiaojie_confirmedf">
+            <field name="name">后勤部审批</field>
+            <field name="wkf_id" ref="wkf_lizhijiaojie"/>
+            <field name="kind">function</field>
+            <field name="action">action_confirmf()</field>
+        </record>
+        <record model="workflow.activity" id="lizhijiaojie_confirmedi">
+            <field name="name">财务部审批</field>
+            <field name="wkf_id" ref="wkf_lizhijiaojie"/>
+            <field name="kind">function</field>
+            <field name="action">action_confirmi()</field>
+        </record>
+        <record model="workflow.activity" id="lizhijiaojie_confirmeds">
+            <field name="name">分管领导审批</field>
+            <field name="wkf_id" ref="wkf_lizhijiaojie"/>
+            <field name="kind">function</field>
+            <field name="action">action_confirms()</field>
+        </record>
+        <record model="workflow.activity" id="lizhijiaojie_confirmede">
+            <field name="name">人力资源部</field>
+            <field name="wkf_id" ref="wkf_lizhijiaojie"/>
+            <field name="kind">function</field>
+            <field name="action">action_confirme()</field>
+        </record>
+        <record model="workflow.activity" id="lizhijiaojie_done">
+            <field name="name">审批完成</field>
+            <field name="wkf_id" ref="wkf_lizhijiaojie"/>
+            <field name="kind">function</field>
+            <field name="action">action_done()</field>
+        </record>
+
+
+
+        <record model="workflow.transition" id="lizhijiaojie_draft_to_confirmed">
+            <field name="act_from" ref="lizhijiaojie_draft"/>
+            <field name="act_to" ref="lizhijiaojie_confirmed"/>
+            <field name="signal">confirm</field>
+        </record>
+        <record model="workflow.transition" id="lizhijiaojie_confirmed_to_draft">
+            <field name="act_from" ref="lizhijiaojie_confirmed"/>
+            <field name="act_to" ref="lizhijiaojie_draft"/>
+            <field name="signal">draft</field>
+        </record>
+
+        <record model="workflow.transition" id="lizhijiaojie_confirmed_to_confirmedt">
+            <field name="act_from" ref="lizhijiaojie_confirmed"/>
+            <field name="act_to" ref="lizhijiaojie_confirmedt"/>
+            <field name="signal">confirm</field>
+        </record>
+        <record model="workflow.transition" id="lizhijiaojie_confirmedt_to_confirmed">
+            <field name="act_from" ref="lizhijiaojie_confirmedt"/>
+            <field name="act_to" ref="lizhijiaojie_confirmed"/>
+            <field name="signal">draft</field>
+        </record>
+
+        <record model="workflow.transition" id="lizhijiaojie_confirmedt_to_confirmedh">
+            <field name="act_from" ref="lizhijiaojie_confirmedt"/>
+            <field name="act_to" ref="lizhijiaojie_confirmedh"/>
+            <field name="signal">confirm</field>
+        </record>
+        <record model="workflow.transition" id="lizhijiaojie_confirmedh_to_confirmedt">
+            <field name="act_from" ref="lizhijiaojie_confirmedh"/>
+            <field name="act_to" ref="lizhijiaojie_confirmedt"/>
+            <field name="signal">draft</field>
+        </record>
+
+        <record model="workflow.transition" id="lizhijiaojie_confirmedh_to_confirmedf">
+            <field name="act_from" ref="lizhijiaojie_confirmedh"/>
+            <field name="act_to" ref="lizhijiaojie_confirmedf"/>
+            <field name="signal">confirm</field>
+        </record>
+        <record model="workflow.transition" id="lizhijiaojie_confirmedf_to_confirmedh">
+            <field name="act_from" ref="lizhijiaojie_confirmedf"/>
+            <field name="act_to" ref="lizhijiaojie_confirmedh"/>
+            <field name="signal">draft</field>
+        </record>
+
+        <record model="workflow.transition" id="lizhijiaojie_confirmedf_to_confirmedi">
+            <field name="act_from" ref="lizhijiaojie_confirmedf"/>
+            <field name="act_to" ref="lizhijiaojie_confirmedi"/>
+            <field name="signal">confirm</field>
+        </record>
+        <record model="workflow.transition" id="lizhijiaojie_confirmedi_to_confirmehf">
+            <field name="act_from" ref="lizhijiaojie_confirmedi"/>
+            <field name="act_to" ref="lizhijiaojie_confirmedf"/>
+            <field name="signal">draft</field>
+        </record>
+
+        <record model="workflow.transition" id="lizhijiaojie_confirmedi_to_confirmeds">
+            <field name="act_from" ref="lizhijiaojie_confirmedi"/>
+            <field name="act_to" ref="lizhijiaojie_confirmeds"/>
+            <field name="signal">confirm</field>
+        </record>
+        <record model="workflow.transition" id="lizhijiaojie_confirmeds_to_confirmehi">
+            <field name="act_from" ref="lizhijiaojie_confirmeds"/>
+            <field name="act_to" ref="lizhijiaojie_confirmedi"/>
+            <field name="signal">draft</field>
+        </record>
+
+         <record model="workflow.transition" id="lizhijiaojie_confirmeds_to_confirmede">
+            <field name="act_from" ref="lizhijiaojie_confirmeds"/>
+            <field name="act_to" ref="lizhijiaojie_confirmede"/>
+            <field name="signal">confirm</field>
+        </record>
+        <record model="workflow.transition" id="lizhijiaojie_confirmede_to_confirmehs">
+            <field name="act_from" ref="lizhijiaojie_confirmede"/>
+            <field name="act_to" ref="lizhijiaojie_confirmeds"/>
+            <field name="signal">draft</field>
+        </record>
+
+        <record model="workflow.transition" id="lizhijiaojie_done_to_confirmede">
+            <field name="act_from" ref="lizhijiaojie_done"/>
+            <field name="act_to" ref="lizhijiaojie_confirmede"/>
+            <field name="signal">draft</field>
+        </record>
+        <record model="workflow.transition" id="lizhijiaojie_confirmede_to_done">
+            <field name="act_from" ref="lizhijiaojie_confirmede"/>
+            <field name="act_to" ref="lizhijiaojie_done"/>
+            <field name="signal">done</field>
+        </record>
+
+
+
+
+    </data>
+</openerp>

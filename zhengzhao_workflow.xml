@@ -1,0 +1,56 @@
+<openerp>
+    <data>
+        <record model="workflow" id="wkf_zhengzhao">
+            <field name="name">zhengzhao workflow</field>
+            <field name="osv">zhengzhao</field>
+            <field name="on_create">True</field>
+        </record>
+
+        <record model="workflow.activity" id="zhengzhao_draft">
+            <field name="name">合同创建</field>
+            <field name="wkf_id" ref="wkf_zhengzhao"/>
+            <field name="flow_start" eval="True"/>
+            <field name="kind">function</field>
+            <field name="action">action_draft()</field>
+        </record>
+        <record model="workflow.activity" id="zhengzhao_confirmed">
+            <field name="name">提交</field>
+            <field name="wkf_id" ref="wkf_zhengzhao"/>
+            <field name="kind">function</field>
+            <field name="action">action_confirm()</field>
+        </record>
+        <record model="workflow.activity" id="zhengzhao_done">
+            <field name="name">审批完成</field>
+            <field name="wkf_id" ref="wkf_zhengzhao"/>
+            <field name="kind">function</field>
+            <field name="action">action_done()</field>
+        </record>
+
+
+
+        <record model="workflow.transition" id="zhengzhao_draft_to_confirmed">
+            <field name="act_from" ref="zhengzhao_draft"/>
+            <field name="act_to" ref="zhengzhao_confirmed"/>
+            <field name="signal">confirm</field>
+        </record>
+        <record model="workflow.transition" id="zhengzhao_confirmed_to_draft">
+            <field name="act_from" ref="zhengzhao_confirmed"/>
+            <field name="act_to" ref="zhengzhao_draft"/>
+            <field name="signal">draft</field>
+        </record>
+        <record model="workflow.transition" id="zhengzhao_done_to_confirmed">
+            <field name="act_from" ref="zhengzhao_done"/>
+            <field name="act_to" ref="zhengzhao_confirmed"/>
+            <field name="signal">draft</field>
+        </record>
+        <record model="workflow.transition" id="zhengzhao_confirmed_to_done">
+            <field name="act_from" ref="zhengzhao_confirmed"/>
+            <field name="act_to" ref="zhengzhao_done"/>
+            <field name="signal">done</field>
+        </record>
+
+
+
+
+    </data>
+</openerp>

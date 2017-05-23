@@ -1,0 +1,142 @@
+<openerp>
+    <data>
+        <record model="workflow" id="wkf_tiaogang">
+            <field name="name">tiaogang workflow</field>
+            <field name="osv">tiaogang</field>
+            <field name="on_create">True</field>
+        </record>
+
+        <record model="workflow.activity" id="tiaogang_draft">
+            <field name="name">填写申请</field>
+            <field name="wkf_id" ref="wkf_tiaogang"/>
+            <field name="flow_start" eval="True"/>
+            <field name="kind">function</field>
+            <field name="action">action_draft()</field>
+        </record>
+        <record model="workflow.activity" id="tiaogang_confirmed">
+            <field name="name">原工段长</field>
+            <field name="wkf_id" ref="wkf_tiaogang"/>
+            <field name="kind">function</field>
+            <field name="action">action_confirm()</field>
+        </record>
+        <record model="workflow.activity" id="tiaogang_confirmedt">
+            <field name="name">拟转部门工段长</field>
+            <field name="wkf_id" ref="wkf_tiaogang"/>
+            <field name="kind">function</field>
+            <field name="action">action_confirmt()</field>
+        </record>
+        <record model="workflow.activity" id="tiaogang_confirmedh">
+            <field name="name">原部长</field>
+            <field name="wkf_id" ref="wkf_tiaogang"/>
+            <field name="kind">function</field>
+            <field name="action">action_confirmh()</field>
+        </record>
+        <record model="workflow.activity" id="tiaogang_confirmedf">
+            <field name="name">拟转部门部长</field>
+            <field name="wkf_id" ref="wkf_tiaogang"/>
+            <field name="kind">function</field>
+            <field name="action">action_confirmf()</field>
+        </record>
+        <record model="workflow.activity" id="tiaogang_confirmedi">
+            <field name="name">原分管领导</field>
+            <field name="wkf_id" ref="wkf_tiaogang"/>
+            <field name="kind">function</field>
+            <field name="action">action_confirmi()</field>
+        </record>
+        <record model="workflow.activity" id="tiaogang_confirmeds">
+            <field name="name">拟转部门分管领导</field>
+            <field name="wkf_id" ref="wkf_tiaogang"/>
+            <field name="kind">function</field>
+            <field name="action">action_confirms()</field>
+        </record>
+        <record model="workflow.activity" id="tiaogang_done">
+            <field name="name">审批完成</field>
+            <field name="wkf_id" ref="wkf_tiaogang"/>
+            <field name="kind">function</field>
+            <field name="action">action_done()</field>
+        </record>
+
+
+
+        <record model="workflow.transition" id="tiaogang_draft_to_confirmed">
+            <field name="act_from" ref="tiaogang_draft"/>
+            <field name="act_to" ref="tiaogang_confirmed"/>
+            <field name="signal">confirm</field>
+        </record>
+        <record model="workflow.transition" id="tiaogang_confirmed_to_draft">
+            <field name="act_from" ref="tiaogang_confirmed"/>
+            <field name="act_to" ref="tiaogang_draft"/>
+            <field name="signal">draft</field>
+        </record>
+
+        <record model="workflow.transition" id="tiaogang_confirmed_to_confirmedt">
+            <field name="act_from" ref="tiaogang_confirmed"/>
+            <field name="act_to" ref="tiaogang_confirmedt"/>
+            <field name="signal">confirm</field>
+        </record>
+        <record model="workflow.transition" id="tiaogang_confirmedt_to_confirmed">
+            <field name="act_from" ref="tiaogang_confirmedt"/>
+            <field name="act_to" ref="tiaogang_confirmed"/>
+            <field name="signal">draft</field>
+        </record>
+
+        <record model="workflow.transition" id="tiaogang_confirmedt_to_confirmedh">
+            <field name="act_from" ref="tiaogang_confirmedt"/>
+            <field name="act_to" ref="tiaogang_confirmedh"/>
+            <field name="signal">confirm</field>
+        </record>
+        <record model="workflow.transition" id="tiaogang_confirmedh_to_confirmedt">
+            <field name="act_from" ref="tiaogang_confirmedh"/>
+            <field name="act_to" ref="tiaogang_confirmedt"/>
+            <field name="signal">draft</field>
+        </record>
+
+        <record model="workflow.transition" id="tiaogang_confirmedh_to_confirmedf">
+            <field name="act_from" ref="tiaogang_confirmedh"/>
+            <field name="act_to" ref="tiaogang_confirmedf"/>
+            <field name="signal">confirm</field>
+        </record>
+        <record model="workflow.transition" id="tiaogang_confirmedf_to_confirmedh">
+            <field name="act_from" ref="tiaogang_confirmedf"/>
+            <field name="act_to" ref="tiaogang_confirmedh"/>
+            <field name="signal">draft</field>
+        </record>
+
+        <record model="workflow.transition" id="tiaogang_confirmedf_to_confirmedi">
+            <field name="act_from" ref="tiaogang_confirmedf"/>
+            <field name="act_to" ref="tiaogang_confirmedi"/>
+            <field name="signal">confirm</field>
+        </record>
+        <record model="workflow.transition" id="tiaogang_confirmedi_to_confirmehf">
+            <field name="act_from" ref="tiaogang_confirmedi"/>
+            <field name="act_to" ref="tiaogang_confirmedf"/>
+            <field name="signal">draft</field>
+        </record>
+
+        <record model="workflow.transition" id="tiaogang_confirmedi_to_confirmeds">
+            <field name="act_from" ref="tiaogang_confirmedi"/>
+            <field name="act_to" ref="tiaogang_confirmeds"/>
+            <field name="signal">confirm</field>
+        </record>
+        <record model="workflow.transition" id="tiaogang_confirmeds_to_confirmehi">
+            <field name="act_from" ref="tiaogang_confirmeds"/>
+            <field name="act_to" ref="tiaogang_confirmedi"/>
+            <field name="signal">draft</field>
+        </record>
+
+        <record model="workflow.transition" id="tiaogang_done_to_confirmeds">
+            <field name="act_from" ref="tiaogang_done"/>
+            <field name="act_to" ref="tiaogang_confirmeds"/>
+            <field name="signal">draft</field>
+        </record>
+        <record model="workflow.transition" id="tiaogang_confirmeds_to_done">
+            <field name="act_from" ref="tiaogang_confirmeds"/>
+            <field name="act_to" ref="tiaogang_done"/>
+            <field name="signal">done</field>
+        </record>
+
+
+
+
+    </data>
+</openerp>

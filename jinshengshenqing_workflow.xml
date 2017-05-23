@@ -1,0 +1,108 @@
+<openerp>
+    <data>
+        <record model="workflow" id="wkf_jinsheng">
+            <field name="name">jinsheng workflow</field>
+            <field name="osv">jinsheng</field>
+            <field name="on_create">True</field>
+        </record>
+
+        <record model="workflow.activity" id="jinsheng_draft">
+            <field name="name">建立申请</field>
+            <field name="wkf_id" ref="wkf_jinsheng"/>
+            <field name="flow_start" eval="True"/>
+            <field name="kind">function</field>
+            <field name="action">action_draft()</field>
+        </record>
+        <record model="workflow.activity" id="jinsheng_confirmed">
+            <field name="name">工段长审批</field>
+            <field name="wkf_id" ref="wkf_jinsheng"/>
+            <field name="kind">function</field>
+            <field name="action">action_confirm()</field>
+        </record>
+        <record model="workflow.activity" id="jinsheng_confirmedt">
+            <field name="name">部长意见</field>
+            <field name="wkf_id" ref="wkf_jinsheng"/>
+            <field name="kind">function</field>
+            <field name="action">action_confirmt()</field>
+        </record>
+        <record model="workflow.activity" id="jinsheng_confirmedh">
+            <field name="name">分管副总意见</field>
+            <field name="wkf_id" ref="wkf_jinsheng"/>
+            <field name="kind">function</field>
+            <field name="action">action_confirmh()</field>
+        </record>
+        <record model="workflow.activity" id="jinsheng_confirmedf">
+            <field name="name">总经理意见</field>
+            <field name="wkf_id" ref="wkf_jinsheng"/>
+            <field name="kind">function</field>
+            <field name="action">action_confirmf()</field>
+        </record>
+        <record model="workflow.activity" id="jinsheng_done">
+            <field name="name">审批完成</field>
+            <field name="wkf_id" ref="wkf_jinsheng"/>
+            <field name="kind">function</field>
+            <field name="action">action_done()</field>
+        </record>
+
+
+<!--1-->
+        <record model="workflow.transition" id="jinsheng_draft_to_confirmed">
+            <field name="act_from" ref="jinsheng_draft"/>
+            <field name="act_to" ref="jinsheng_confirmed"/>
+            <field name="signal">confirm</field>
+        </record>
+        <record model="workflow.transition" id="jinsheng_confirmed_to_draft">
+            <field name="act_from" ref="jinsheng_confirmed"/>
+            <field name="act_to" ref="jinsheng_draft"/>
+            <field name="signal">draft</field>
+        </record>
+<!--2-->
+        <record model="workflow.transition" id="jinsheng_confirmed_to_confirmedt">
+            <field name="act_from" ref="jinsheng_confirmed"/>
+            <field name="act_to" ref="jinsheng_confirmedt"/>
+            <field name="signal">confirm</field>
+        </record>
+        <record model="workflow.transition" id="jinsheng_confirmedt_to_confirmed">
+            <field name="act_from" ref="jinsheng_confirmedt"/>
+            <field name="act_to" ref="jinsheng_confirmed"/>
+            <field name="signal">draft</field>
+        </record>
+<!--3-->
+        <record model="workflow.transition" id="jinsheng_confirmedt_to_confirmedh">
+            <field name="act_from" ref="jinsheng_confirmedt"/>
+            <field name="act_to" ref="jinsheng_confirmedh"/>
+            <field name="signal">confirm</field>
+        </record>
+        <record model="workflow.transition" id="jinsheng_confirmedh_to_confirmedt">
+            <field name="act_from" ref="jinsheng_confirmedh"/>
+            <field name="act_to" ref="jinsheng_confirmedt"/>
+            <field name="signal">draft</field>
+        </record>
+<!--4-->
+        <record model="workflow.transition" id="jinsheng_confirmedh_to_confirmedf">
+            <field name="act_from" ref="jinsheng_confirmedh"/>
+            <field name="act_to" ref="jinsheng_confirmedf"/>
+            <field name="signal">confirm</field>
+        </record>
+        <record model="workflow.transition" id="jinsheng_confirmedf_to_confirmedh">
+            <field name="act_from" ref="jinsheng_confirmedf"/>
+            <field name="act_to" ref="jinsheng_confirmedh"/>
+            <field name="signal">draft</field>
+        </record>
+<!--5-->
+        <record model="workflow.transition" id="jinsheng_done_to_confirmedf">
+            <field name="act_from" ref="jinsheng_done"/>
+            <field name="act_to" ref="jinsheng_confirmedf"/>
+            <field name="signal">draft</field>
+        </record>
+        <record model="workflow.transition" id="jinsheng_confirmedf_to_done">
+            <field name="act_from" ref="jinsheng_confirmedf"/>
+            <field name="act_to" ref="jinsheng_done"/>
+            <field name="signal">done</field>
+        </record>
+
+
+
+
+    </data>
+</openerp>

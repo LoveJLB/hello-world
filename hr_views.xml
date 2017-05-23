@@ -1,0 +1,2085 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+
+        <!-- Top menu item -->
+        <menuitem
+            id="menu_hr_root"
+            name="人力资源策划"
+            groups="base.group_user"
+            web_icon="hr,static/description/icon.png"
+            sequence="75"/>
+
+        <menuitem
+            id="menu_hr_main"
+            name="Human Resources"
+            parent="menu_hr_root"
+            sequence="0"/>
+
+        <menuitem
+            id="menu_hr_reporting_timesheet"
+            name="Reports"
+            parent="menu_hr_root"
+            groups=""
+            sequence="99"/>
+
+        <menuitem
+            id="menu_human_resources_configuration"
+            name="Configuration"
+            parent="menu_hr_root"
+            groups=""
+            sequence="100"/>
+        <menuitem id="menu_hr_gangwei" parent="menu_hr_root" name="岗位管理"/>
+        <menuitem id="menu_hr_hetong" parent="menu_hr_root" name="合同管理" />
+        <menuitem id="menu_hr_zhengzhao" parent="menu_hr_root" name="证照管理" />
+        <menuitem id="menu_hr_zaigangzhuangtai" parent="menu_hr_root" name="在岗状态管理" />
+        <menuitem id="menu_hr_renlixuqiu" parent="menu_hr_root" name="招聘管理"/>
+        <menuitem id="menu_hr_peixun" parent="menu_hr_root" name="培训管理"/>
+
+        <!-- Employee -->
+        <record id="view_employee_form" model="ir.ui.view">
+            <field name="name">hr.employee.form</field>
+            <field name="model">hr.employee</field>
+            <field name="arch" type="xml">
+                <form string="Employee">
+                    <header>
+                        <button name="draft" type="workflow"
+                                string="返回修改"
+                                states="confirmed,confirmedt"/>
+                        <button name="confirm" type="workflow"
+                                string="提交" states="draft,confirmed"
+                                class="oe_highlight" />
+                        <button name="done" type="workflow"
+                                string="审批完成" states="confirmedt"
+                                class="oe_highlight"/>
+
+                        <field name="state" widget="statusbar"/>
+                    </header>
+                    <sheet>
+                        <div class="oe_button_box" name="button_box">
+                            <button name="toggle_active" type="object" groups="hr.group_hr_user"
+                                    class="oe_stat_button" icon="fa-archive">
+                                <field name="active" widget="boolean_button"
+                                    options='{"terminology": "archive"}'/>
+                            </button>
+                        </div>
+                        <field name="image" widget='image' class="oe_avatar" options='{"preview_image":"image_medium"}'  attrs="{'readonly':[('state', '!=', 'draft')]}"/>
+                        <div class="oe_title">
+                            <label for="name" class="oe_edit_only"/>
+                            <h1>
+                                <field name="name" placeholder="Employee's Name"  attrs="{'readonly': [('state', '!=', 'draft')], 'required': [('state', '=', 'draft')]}"/>
+                                <field name="bianhao" placeholder="员工编号"  attrs="{'readonly': [('state', '!=', 'draft')], 'required': [('state', '=', 'draft')]}"/>
+                            </h1>
+                        </div>
+                        <field name="category_ids" widget="many2many_tags" placeholder="e.g. Part Time" options="{'no_create_edit': True}" groups="hr.group_hr_user"/>
+                        <notebook>
+                            <page name="public" string="Public Information">
+                                <group>
+                                    <group string="Contact Information">
+                                        <field name="address_id"
+                                            context="{'show_address': 1}"
+                                            options='{"always_reload": True, "highlight_first_line": True}'  attrs="{'readonly': [('state', '!=', 'draft')], 'required': [('state', '=', 'draft')]}"/>
+                                        <field name="mobile_phone"  attrs="{'readonly': [('state', '!=', 'draft')], 'required': [('state', '=', 'draft')]}"/>
+                                        <field name="work_location"  attrs="{'readonly': [('state', '!=', 'draft')], 'required': [('state', '=', 'draft')]}"/>
+                                        <field name="work_email" widget="email"  attrs="{'readonly': [('state', '!=', 'draft')], 'required': [('state', '=', 'draft')]}"/>
+                                        <field name="work_phone"  attrs="{'readonly': [('state', '!=', 'draft')], 'required': [('state', '=', 'draft')]}"/>
+                                    </group>
+                                    <group string="Position">
+                                        <field name="department_id" attrs="{'readonly': [('state', '!=', 'draft')], 'required': [('state', '=', 'draft')]}"/>
+                                        <field name="job_id"  attrs="{'readonly': [('state', '!=', 'draft')], 'required': [('state', '=', 'draft')]}"/>
+                                        <field name="parent_id"  attrs="{'readonly': [('state', '!=', 'draft')], 'required': [('state', '=', 'draft')]}"/>
+                                        <field name="coach_id"  attrs="{'readonly': [('state', '!=', 'draft')], 'required': [('state', '=', 'draft')]}"/>
+                                        <!--<field name="calendar_id"  attrs="{'readonly': [('state', '!=', 'draft')], 'required': [('state', '=', 'draft')]}"/>-->
+                                    </group>
+                                </group>
+                                <field name="notes" placeholder="Other Information ..." colspan="4"  attrs="{'readonly':[('state','!=','draft')]}"/>
+                            </page>
+                            <page string="Personal Information">
+                                <group>
+                                    <group string="Citizenship &amp; Other Information">
+                                        <field name="country_id" options='{"no_open": True, "no_create": True}'  attrs="{'readonly': [('state', '!=', 'draft')], 'required': [('state', '=', 'draft')]}"/>
+                                        <field name="jiguan"  attrs="{'readonly': [('state', '!=', 'draft')], 'required': [('state', '=', 'draft')]}"/>
+                                        <field name="minzu"  attrs="{'readonly': [('state', '!=', 'draft')], 'required': [('state', '=', 'draft')]}"/>
+                                        <field name="shengao"  attrs="{'readonly': [('state', '!=', 'draft')], 'required': [('state', '=', 'draft')]}"/>
+                                        <field name="tizhong"  attrs="{'readonly': [('state', '!=', 'draft')], 'required': [('state', '=', 'draft')]}"/>
+                                        <field name="zhengzhimianmao"  attrs="{'readonly': [('state', '!=', 'draft')], 'required': [('state', '=', 'draft')]}"/>
+                                        <field name="identification_id" groups="hr.group_hr_user"  attrs="{'readonly': [('state', '!=', 'draft')], 'required': [('state', '=', 'draft')]}"/>
+                                        <field name="passport_id" groups="hr.group_hr_user"  attrs="{'readonly': [('state', '!=', 'draft')], 'required': [('state', '=', 'draft')]}"/>
+                                        <field name="bank_account_id"  attrs="{'readonly': [('state', '!=', 'draft')], 'required': [('state', '=', 'draft')]}"/>
+                                    </group>
+                                    <group string="地址">
+                                        <field name="address_home_id" attrs="{'readonly': [('state', '!=', 'draft')], 'required': [('state', '=', 'draft')]}"/>
+                                         <field name="youbian"  attrs="{'readonly': [('state', '!=', 'draft')], 'required': [('state', '=', 'draft')]}"/>
+                                    </group>
+                                    <group string="Status">
+                                        <field name="gender"  attrs="{'readonly': [('state', '!=', 'draft')], 'required': [('state', '=', 'draft')]}"/>
+                                        <field name="marital" attrs="{'readonly': [('state', '!=', 'draft')], 'required': [('state', '=', 'draft')]}"/>
+                                        <field name="zuigaoxueli"  attrs="{'readonly': [('state', '!=', 'draft')], 'required': [('state', '=', 'draft')]}"/>
+                                        <field name="biyeyuanxiao"  attrs="{'readonly': [('state', '!=', 'draft')], 'required': [('state', '=', 'draft')]}"/>
+                                        <field name="waiyushuiping"  attrs="{'readonly': [('state', '!=', 'draft')], 'required': [('state', '=', 'draft')]}"/>
+                                        <field name="jiankangzhuangkuang"  attrs="{'readonly': [('state', '!=', 'draft')], 'required': [('state', '=', 'draft')]}"/>
+                                        <field name="shifoutijianjitijianjieguo"  attrs="{'readonly': [('state', '!=', 'draft')], 'required': [('state', '=', 'draft')]}"/>
+                                        <field name="shifoupeidaiyanjing"  attrs="{'readonly': [('state', '!=', 'draft')], 'required': [('state', '=', 'draft')]}"/>
+                                    </group>
+                                    <group string="Birth">
+                                        <field name="birthday"  attrs="{'readonly': [('state', '!=', 'draft')], 'required': [('state', '=', 'draft')]}"/>
+                                        <field name="hukousuozaidi"  attrs="{'readonly': [('state', '!=', 'draft')], 'required': [('state', '=', 'draft')]}"/>
+                                    </group>
+                                </group>
+                                <notebook>
+                                    <page string="学习经历">
+                                        <field name="xuexijingli"   attrs="{'readonly': [('state', '!=', 'draft')], 'required': [('state', '=', 'draft')]}"/>
+                                    </page>
+                                    <page string="培训经历">
+                                        <field name="peixunjingli"  attrs="{'readonly': [('state', '!=', 'draft')], 'required': [('state', '=', 'draft')]}"/>
+                                    </page>
+                                    <page string="工作经历">
+                                        <field name="gongzuojingli"  attrs="{'readonly': [('state', '!=', 'draft')], 'required': [('state', '=', 'draft')]}"/>
+                                    </page>
+                                    <page string="家庭成员">
+                                        <field name="jiatingchengyuan"  attrs="{'readonly': [('state', '!=', 'draft')], 'required': [('state', '=', 'draft')]}"/>
+                                    </page>
+                                </notebook>
+                            </page>
+                            <page string="HR Settings" groups="">
+                                <group>
+                                    <group string='Status' name="active_group">
+                                        <field name="company_id" groups="base.group_multi_company"  attrs="{'readonly': [('state', '!=', 'draft')], 'required': [('state', '=', 'draft')]}"/>
+                                        <field name="user_id" string="Related User"  attrs="{'readonly': [('state', '!=', 'draft')], 'required': [('state', '=', 'draft')]}"/>
+                                        <field name="shixifrom"  attrs="{'readonly': [('state', '!=', 'confirmed')], 'required': [('state', '=', 'confirmed')]}"/>
+                                        <field name="shixito"  attrs="{'readonly': [('state', '!=', 'confirmed')], 'required': [('state', '=', 'confirmed')]}"/>
+                                        <field name="xianrenzhizhuangkuang" attrs="{'readonly': [('state', '!=', 'confirmed')], 'required': [('state', '=', 'confirmed')]}"/>
+                                        <!--<field name="samedepartment_uid" string="与该员工相同部门用户"/>-->
+                                    </group>
+                                </group>
+                            </page>
+                        </notebook>
+                    </sheet>
+                    <div class="oe_chatter">
+                        <field name="message_follower_ids" widget="mail_followers" groups="base.group_user"/>
+                        <field name="message_ids" widget="mail_thread"/>
+                    </div>
+                </form>
+            </field>
+        </record>
+
+        <record id="view_employee_tree" model="ir.ui.view">
+            <field name="name">hr.employee.tree</field>
+            <field name="model">hr.employee</field>
+            <field name="arch" type="xml">
+                <tree string="Employees" decoration-bf="message_needaction==True">
+                    <field name="name"/>
+                    <field name="work_phone"/>
+                    <field name="work_email"/>
+                    <field name="company_id" groups="base.group_multi_company"/>
+                    <field name="department_id"/>
+                    <field name="job_id"/>
+                    <field name="parent_id"/>
+                    <field name="coach_id" invisible="1"/>
+                    <field name="message_needaction" invisible="1"/>
+                </tree>
+            </field>
+        </record>
+
+        <record id="view_employee_filter" model="ir.ui.view">
+            <field name="name">hr.employee.search</field>
+            <field name="model">hr.employee</field>
+            <field name="arch" type="xml">
+                <search string="Employees">
+                    <field name="name" string="Employees" filter_domain="['|',('work_email','ilike',self),('name','ilike',self)]"/>
+                    <field name="department_id"/>
+                    <field name="category_ids" groups="hr.group_hr_user"/>
+                    <field name="job_id" />
+                    <filter string="Unread Messages" name="message_needaction" domain="[('message_needaction','=',True)]"/>
+                    <filter string="Archived" name="inactive" domain="[('active','=',False)]"/>
+                    <group expand="0" string="Group By">
+                        <filter string="Manager" domain="[]" context="{'group_by':'parent_id'}"/>
+                        <filter string="Coach" domain="[]" context="{'group_by':'coach_id'}"/>
+                        <filter string="Department" domain="[]" context="{'group_by':'department_id'}"/>
+                        <filter string="Job" domain="[]" context="{'group_by':'job_id'}"/>
+                        <filter string="Company" domain="[]" context="{'group_by':'company_id'}" groups="base.group_multi_company"/>
+                    </group>
+                </search>
+             </field>
+         </record>
+
+    <record id="hr_kanban_view_employees" model="ir.ui.view">
+        <field name="name">hr.employee.kanban</field>
+        <field name="model">hr.employee</field>
+        <field name="priority">10</field>
+        <field name="arch" type="xml">
+            <kanban class="o_hr_employee_kanban">
+                <field name="last_login"/>
+                <field name="message_is_follower"/>
+                <field name="message_follower_ids"/>
+                <field name="message_ids"/>
+                <field name="message_needaction_counter"/>
+                <templates>
+                    <t t-name="kanban-box">
+                    <div class="oe_kanban_global_click">
+                        <field name="category_ids"/>
+                        <div class="o_kanban_image">
+                            <img t-att-src="kanban_image('hr.employee', 'image_medium', record.id.value)"/>
+                            <div class="o_employee_summary_icons">
+                                <t t-if="record.message_needaction_counter.raw_value">
+                                    <span class='oe_kanban_mail_new' title='Unread Messages'><i class='fa fa-comments'/><t t-raw="record.message_needaction_counter.raw_value"/></span>
+                                </t>
+                                <span title='Messages'><i class='fa fa-comments'/><t t-esc="record.message_ids.raw_value.length"/></span>
+                                <span title='Followers'><i class='fa fa-users'/><t t-esc="record.message_follower_ids.raw_value.length"/></span>
+                            </div>
+                        </div>
+                        <div class="oe_kanban_details">
+                            <strong>
+                                <field name="name"/>
+                            </strong>
+                            <ul>
+                                <li id="last_login"/>
+                                <li t-if="record.job_id.raw_value"><field name="job_id"/></li>
+                                <li t-if="record.work_location.raw_value"><field name="work_location"/></li>
+                                <li t-if="record.work_email.raw_value"><i class="fa fa-envelope"></i> <field name="work_email"/></li>
+                                <li t-if="record.work_phone.raw_value"><i class="fa fa-phone"></i> <field name="work_phone"/></li>
+                                <li t-if="record.mobile_phone.raw_value"><i class="fa fa-mobile"></i> <field name="mobile_phone"/></li>
+                            </ul>
+                            <div class="o_kanban_button">
+                                <button t-if="record.message_is_follower.raw_value" name="action_unfollow" type="object" class="o_follow_btn o_following btn btn-sm btn-default">
+                                    <span class="o_unfollow">Unfollow</span>
+                                    <span class="o_following">Following</span>
+                                </button>
+                                <button t-if="!record.message_is_follower.raw_value" name="action_follow" type="object" class="o_follow_btn o_follow btn btn-sm btn-primary">Follow</button>
+                            </div>
+                        </div>
+                    </div>
+                    </t>
+                </templates>
+            </kanban>
+
+        </field>
+    </record>
+
+        <record id="open_view_employee_tree" model="ir.actions.act_window">
+            <field name="name">Employees Structure</field>
+            <field name="res_model">hr.employee</field>
+            <field name="view_type">tree</field>
+            <field name="view_mode">tree,form</field>
+            <field name="view_id" ref="view_employee_tree"/>
+            <field name="domain">[('parent_id','=',False)]</field>
+            <field name="search_view_id" ref="view_employee_filter"/>
+        </record>
+
+        <record id="open_view_employee_list" model="ir.actions.act_window">
+            <field name="name">Employees</field>
+            <field name="res_model">hr.employee</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">form,tree</field>
+            <field name="view_id" eval="False"/>
+            <field name="search_view_id" ref="view_employee_filter"/>
+        </record>
+
+        <record id="open_view_employee_list_my" model="ir.actions.act_window">
+            <field name="name">Employees</field>
+            <field name="res_model">hr.employee</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">kanban,tree,form</field>
+            <field name="domain">[]</field>
+            <field name="context">{}</field>
+            <field name="view_id" eval="False"/>
+            <field name="search_view_id" ref="view_employee_filter"/>
+            <field name="help" type="html">
+              <p class="oe_view_nocontent_create">
+                Click to add a new employee.
+              </p><p>
+                With just a quick glance on the Odoo employee screen, you
+                can easily find all the information you need for each person;
+                contact data, job position, availability, etc.
+              </p>
+            </field>
+        </record>
+
+        <menuitem
+            id="menu_open_view_employee_list_my"
+            action="open_view_employee_list_my"
+            parent="menu_hr_root"
+            sequence="3"/>
+
+        <!-- Employee tree by manager -->
+        <record id="view_partner_tree2" model="ir.ui.view">
+            <field name="name">hr.employee.tree</field>
+            <field name="model">hr.employee</field>
+            <field name="field_parent">child_ids</field>
+            <field name="priority" eval="20"/>
+            <field name="arch" type="xml">
+                <tree string="Employees">
+                    <field name="name"/>
+                    <field name="work_phone"/>
+                    <field name="work_email"/>
+                    <field name="company_id" groups="base.group_multi_company"/>
+                    <field name="department_id"/>
+                    <field name="job_id"/>
+                    <field name="coach_id" invisible="1"/>
+                    <field name="parent_id" invisible="1"/>
+                </tree>
+            </field>
+        </record>
+
+        <record id="hr_employee_action_subordinate_hierachy" model="ir.actions.act_window">
+            <field name="name">Subordinate Hierarchy</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">hr.employee</field>
+            <field name="domain">[('id','in',active_ids)]</field>
+            <field name="view_type">tree</field>
+            <field name="view_id" ref="view_partner_tree2"/>
+        </record>
+
+        <record id="hr_employee_action_subordinate_hierachy_mutli" model="ir.values">
+            <field name="name">Subordinate Hierarchy</field>
+            <field name="model_id" ref="base.model_res_partner"/>
+            <field name="value" eval="'ir.actions.act_window,' + str(ref('hr_employee_action_subordinate_hierachy'))"/>
+            <field name="key">action</field>
+            <field name="key2">client_action_multi</field>
+            <field name="model">hr.employee</field>
+        </record>
+
+        <!-- Employee Category -->
+       <record id="view_employee_category_form" model="ir.ui.view">
+            <field name="name">hr.employee.category.form</field>
+            <field name="model">hr.employee.category</field>
+            <field name="arch" type="xml">
+                <form string="Employee Tags">
+                    <group>
+                        <field name="name"/>
+                    </group>
+                </form>
+            </field>
+        </record>
+
+        <record id="view_employee_category_list" model="ir.ui.view">
+            <field name="name">hr.employee.category.list</field>
+            <field name="model">hr.employee.category</field>
+            <field eval="8" name="priority"/>
+            <field name="arch" type="xml">
+                <tree string="Employees Tags">
+                    <field name="name"/>
+                </tree>
+            </field>
+        </record>
+
+        <record id="open_view_categ_form" model="ir.actions.act_window">
+            <field name="name">Employee Tags</field>
+            <field name="res_model">hr.employee.category</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+        </record>
+
+        <menuitem
+            id="menu_view_employee_category_form"
+            action="open_view_categ_form"
+            parent="menu_human_resources_configuration"
+            groups="base.group_no_one"
+            sequence="1"/>
+
+        <!-- hr.job -->
+        <record id="view_hr_job_form" model="ir.ui.view">
+            <field name="name">hr.job.form</field>
+            <field name="model">hr.job</field>
+            <field name="arch" type="xml">
+                <form string="Job">
+                    <header>
+                        <button name="set_recruit" string="Launch Recruitment" states="open" type="object" class="oe_highlight"/>
+                        <button name="set_open" string="Stop Recruitment" states="recruit" type="object"/>
+                        <field name="state" widget="statusbar" statusbar_visible="recruit,open"/>
+                    </header>
+                    <sheet>
+                        <div class="oe_button_box" name="button_box"/>
+                        <div class="oe_title">
+                            <label for="name" class="oe_edit_only"/>
+                            <h1><field name="name" placeholder="e.g. Sales Manager"/></h1>
+                        </div>
+                        <group name="employee_data">
+                            <group>
+                                <field name="department_id"/>
+                                <field name="no_of_recruitment"/>
+                            </group>
+                        </group>
+                        <div attrs="{'invisible': [('state', '!=', 'recruit')]}">
+                            <label for="description"/>
+                            <field name="description"/>
+                        </div>
+                    </sheet>
+                    <div class="oe_chatter">
+                        <field name="message_follower_ids" widget="mail_followers"/>
+                    </div>
+                </form>
+            </field>
+        </record>
+
+        <record id="view_hr_job_tree" model="ir.ui.view">
+            <field name="name">hr.job.tree</field>
+            <field name="model">hr.job</field>
+            <field name="arch" type="xml">
+                <tree string="Job" decoration-bf="message_needaction==True">
+                    <field name="name"/>
+                    <field name="department_id"/>
+                    <field name="no_of_employee"/>
+                    <field name="no_of_recruitment"/>
+                    <field name="expected_employees"/>
+                    <field name="no_of_hired_employee"/>
+                    <field name="state"/>
+                    <field name="message_needaction" invisible="1"/>
+                </tree>
+            </field>
+        </record>
+
+        <record id="view_job_filter" model="ir.ui.view">
+            <field name="name">hr.job.search</field>
+            <field name="model">hr.job</field>
+            <field name="arch" type="xml">
+                <search string="Jobs">
+                    <field name="name" string="Job"/>
+                    <filter domain="[('state','=','open')]" string="In Position"/>
+                    <filter domain="[('state','=','recruit')]" string="In Recruitment" name="in_recruitment"/>
+                    <field name="department_id"/>
+                    <separator/>
+                    <filter string="Unread Messages" name="message_needaction" domain="[('message_needaction','=',True)]"/>
+                    <group expand="0" string="Group By">
+                        <filter string="Department" domain="[]" context="{'group_by':'department_id'}"/>
+                        <filter string="Status" domain="[]" context="{'group_by':'state'}"/>
+                        <filter string="Company" domain="[]" context="{'group_by':'company_id'}" groups="base.group_multi_company"/>
+                    </group>
+                </search>
+            </field>
+        </record>
+
+        <record id="action_hr_job" model="ir.actions.act_window">
+            <field name="name">Job Positions</field>
+            <field name="res_model">hr.job</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+            <field name="search_view_id" ref="view_job_filter"/>
+            <field name="context">{"search_default_Current":1}</field>
+            <field name="help" type="html">
+              <p class="oe_view_nocontent_create">
+                Click to define a new job position.
+              </p><p>
+                Job Positions are used to define jobs and their requirements.
+                You can keep track of the number of employees you have per job
+                position and follow the evolution according to what you planned
+                for the future.
+              </p><p>
+                You can attach a survey to a job position. It will be used in
+                the recruitment process to evaluate the applicants for this job
+                position.
+              </p>
+            </field>
+        </record>
+
+        <record id="act_employee_from_department" model="ir.actions.act_window">
+            <field name="name">Employees</field>
+            <field name="res_model">hr.employee</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">kanban,form,tree</field>
+            <field name="search_view_id" ref="view_employee_filter"/>
+            <field name="context">{
+                "search_default_department_id": [active_id],
+                "default_department_id": active_id}
+            </field>
+            <field name="help" type="html">
+              <p class="oe_view_nocontent_create">
+                Click to add a new employee.
+              </p><p>
+                With just a quick glance on the Odoo employee screen, you
+                can easily find all the information you need for each person;
+                contact data, job position, availability, etc.
+              </p>
+            </field>
+        </record>
+
+        <!-- hr.department -->
+        <record id="view_department_form" model="ir.ui.view">
+            <field name="name">hr.department.form</field>
+            <field name="model">hr.department</field>
+            <field name="arch" type="xml">
+                <form string="department">
+                     <header>
+                        <button name="draft" type="workflow"
+                                string="返回修改"
+                                states="confirmed,confirmedt"/>
+                        <button name="confirm" type="workflow"
+                                string="提交" states="draft,confirmed"
+                                class="oe_highlight" />
+                        <button name="done" type="workflow"
+                                string="审批完成" states="confirmedt"
+                                class="oe_highlight"/>
+
+                        <field name="state" widget="statusbar"/>
+                    </header>
+                    <sheet>
+                        <div class="oe_button_box" name="button_box">
+                            <button name="toggle_active" type="object" class="oe_stat_button" icon="fa-archive">
+                                <field name="active" widget="boolean_button" options='{"terminology": "archive"}' attrs="{'readonly':[('state','!=','draft')]}"/>
+                            </button>
+                        </div>
+                        <group col="4">
+                            <field name="name" attrs="{'readonly':[('state','!=','draft')]}"/>
+                            <field name="bianhao" attrs="{'readonly':[('state','!=','draft')]}"/>
+                            <field name="manager_id" attrs="{'readonly':[('state','!=','draft')]}"/>
+                            <field name="parent_id" attrs="{'readonly':[('state','!=','draft')]}"/>
+                            <field name="company_id" options="{'no_create': True}" attrs="{'readonly':[('state','!=','draft')]}"/>
+                        </group>
+                        <group>
+                            <field name="bumenjieshao" attrs="{'readonly':[('state','!=','draft')]}"/>
+                            <!--<field name="bumen_uid"  attrs="{'readonly':[('state','=','done')]}"/>-->
+                        </group>
+                    </sheet>
+                    <div class="oe_chatter">
+                        <field name="message_follower_ids" widget="mail_followers" groups="base.group_user"/>
+                        <field name="message_ids" widget="mail_thread"/>
+                    </div>
+                </form>
+            </field>
+        </record>
+
+        <record id="view_department_tree" model="ir.ui.view">
+            <field name="name">hr.department.tree</field>
+            <field name="model">hr.department</field>
+            <field name="field_parent">child_ids</field>
+            <field name="arch" type="xml">
+                <tree string="Companies">
+                    <field name="display_name"/>
+                    <field name="company_id" groups="base.group_multi_company"/>
+                    <field name="manager_id"/>
+                    <field name="parent_id"/>
+                </tree>
+            </field>
+        </record>
+
+        <record id="view_department_filter" model="ir.ui.view">
+            <field name="name">hr.department.search</field>
+            <field name="model">hr.department</field>
+            <field name="arch" type="xml">
+                <search string="Departments">
+                    <field name="name" string="Department"/>
+                    <field name="manager_id" />
+                    <filter string="Unread Messages" name="message_needaction" domain="[('message_needaction','=',True)]"/>
+                    <separator/>
+                    <filter string="Archived" name="inactive" domain="[('active','=',False)]"/>
+                </search>
+             </field>
+        </record>
+
+        <!--<record id="hr_department_view_kanban" model="ir.ui.view" >-->
+            <!--<field name="name">hr.department.kanban</field>-->
+            <!--<field name="model">hr.department</field>-->
+            <!--<field name="arch" type="xml">-->
+                <!--<kanban class="oe_background_grey o_kanban_dashboard o_hr_kanban">-->
+                    <!--<field name="name"/>-->
+                    <!--<field name="company_id"/>-->
+                    <!--<field name="manager_id"/>-->
+                    <!--<field name="color"/>-->
+                    <!--<templates>-->
+                        <!--<t t-name="kanban-box">-->
+                            <!--<div t-attf-class="#{kanban_color(record.color.raw_value)}">-->
+                                <!--<div class="o_kanban_card_header">-->
+                                    <!--<div class="o_kanban_card_header_title">-->
+                                        <!--<div class="o_primary"><field name="name"/></div>-->
+                                        <!--<div class="o_secondary"><field name="company_id"/></div>-->
+                                    <!--</div>-->
+                                    <!--<div class="o_kanban_manage_button_section">-->
+                                        <!--<a class="o_kanban_manage_toggle_button" href="#">More <i class="fa fa-caret-down"/></a>-->
+                                    <!--</div>-->
+                                <!--</div>-->
+                                <!--<div class="container o_kanban_card_content o_visible">-->
+                                    <!--<div class="row">-->
+                                        <!--<div class="col-xs-6 o_kanban_primary_left">-->
+                                            <!--<button class="btn btn-primary" name="%(act_employee_from_department)d" type="action">Employees</button>-->
+                                        <!--</div>-->
+                                        <!--<div class="col-xs-6 o_kanban_primary_right">-->
+                                        <!--</div>-->
+                                    <!--</div>-->
+                                <!--</div><div class="container o_kanban_card_manage_pane o_invisible">-->
+                                    <!--<div class="row">-->
+                                        <!--<div class="col-xs-4 o_kanban_card_manage_section o_kanban_manage_to_do">-->
+                                            <!--<div class="o_kanban_card_manage_title">-->
+                                                <!--<span>To Do</span>-->
+                                            <!--</div>-->
+                                        <!--</div>-->
+                                        <!--<div class="col-xs-4 o_kanban_card_manage_section o_kanban_manage_to_approve">-->
+                                            <!--<div class="o_kanban_card_manage_title">-->
+                                                <!--<span>To Approve</span>-->
+                                            <!--</div>-->
+                                        <!--</div>-->
+                                        <!--<div class="col-xs-4 o_kanban_card_manage_section o_kanban_manage_reports">-->
+                                            <!--<div class="o_kanban_card_manage_title">-->
+                                                <!--<span>Reports</span>-->
+                                            <!--</div>-->
+                                        <!--</div>-->
+                                    <!--</div>-->
+
+                                    <!--<div t-if="widget.editable" class="o_kanban_card_manage_settings row">-->
+                                        <!--<div class="col-xs-8">-->
+                                            <!--<ul class="oe_kanban_colorpicker" data-field="color"/>-->
+                                        <!--</div>-->
+                                        <!--<div class="col-xs-4 text-right">-->
+                                            <!--<a type="edit">Settings</a>-->
+                                        <!--</div>-->
+                                    <!--</div>-->
+                                <!--</div>-->
+
+                            <!--</div>-->
+                        <!--</t>-->
+                    <!--</templates>-->
+                <!--</kanban>-->
+            <!--</field>-->
+        <!--</record>-->
+
+        <record id="open_module_tree_department" model="ir.actions.act_window">
+            <field name="name">Departments</field>
+            <field name="res_model">hr.department</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+            <field name="search_view_id" ref="view_department_filter"/>
+            <field name="help" type="html">
+              <p class="oe_view_nocontent_create">
+                Click to create a department.
+              </p><p>
+                Odoo's department structure is used to manage all documents
+                related to employees by departments: expenses, timesheets,
+                leaves and holidays, recruitments, etc.
+              </p>
+            </field>
+        </record>
+
+        <menuitem
+            action="open_module_tree_department"
+            id="menu_hr_department_tree"
+            parent="menu_hr_root"
+            sequence="90"
+            groups=""/>
+        <!--合同管理-->
+        <record model="ir.ui.view" id="hetong_form_view">
+            <field name="name">hetong.form</field>
+            <field name="model">hetong</field>
+            <field name="arch" type="xml">
+                <form string="合同管理">
+                    <header>
+                        <button name="draft" type="workflow"
+                                string="返回修改"
+                                states="confirmed,accepted" groups="base.group_hr_manager"/>
+                        <button name="confirm" type="workflow"
+                                string="提交" states="draft"
+                                class="oe_highlight" />
+                        <button name="done" type="workflow"
+                                string="审批完成" states="confirmed"
+                                class="oe_highlight" groups="base.group_hr_manager"/>
+
+                        <field name="state" widget="statusbar"/>
+                    </header>
+                    <sheet>
+                        <group string="合同创建">
+                            <group string="员工信息">
+                                <field name="ygxingming"  attrs="{'readonly':[('state','!=','draft')]}"/>
+                                <field name="ygbianhao"  attrs="{'readonly':[('state','!=','draft')]}"/>
+                                <field name="ygbumen"  attrs="{'readonly':[('state','!=','draft')]}"/>
+                                <field name="yggangwei"  attrs="{'readonly':[('state','!=','draft')]}"/>
+                            </group>
+                            <group string="合同信息">
+                                <field name="name"  attrs="{'readonly':[('state','!=','draft')]}"/>
+                                <field name="htleixing"  attrs="{'readonly':[('state','!=','draft')]}"/>
+                                <field name="htqixian"  attrs="{'readonly':[('state','!=','draft')]}"/>
+                                <field name="xvdincishu"  attrs="{'readonly':[('state','!=','draft')]}"/>
+                                <!--<field name="yuanjian" placeholder="请上传原件"/>-->
+                                <field name="yuanjian"  attrs="{'readonly':[('state','!=','draft')]}"/><!-- widget='image' class="oe_avatar"-->
+                            </group>
+                        </group>
+                        <notebook>
+                            <page string="合同说明">
+                                <field name="htshuoming" placeholder="请对合同进行必要说明"  attrs="{'readonly':[('state','!=','draft')]}"/>
+                            </page>
+"
+                        </notebook>
+                    </sheet>
+                     <div class="oe_chatter">
+                        <field name="message_follower_ids" widget="mail_followers" groups="base.group_user"/>
+                        <field name="message_ids" widget="mail_thread"/>
+                    </div>
+                </form>
+            </field>
+        </record>
+
+        <record model="ir.ui.view" id="hetong_tree_view">
+            <field name="name">hetong.tree</field>
+            <field name="model">hetong</field>
+            <field name="arch" type="xml">
+                <tree string="合同">
+                    <field name="name"/>
+                    <field name="htleixing"/>
+                    <field name="ygxingming"/>
+                    <field name="ygbianhao"/>
+                    <field name="yggangwei"/>
+                    <field name="state"/>
+                </tree>
+            </field>
+        </record>
+
+
+        <record model="ir.ui.view" id="hetong_search_view">
+            <field name="name">hetong.search</field>
+            <field name="model">hetong</field>
+            <field name="arch" type="xml">
+                <search>
+                    <field name="name"/>
+                    <field name="ygxingming"/>
+                    <field name="state"/>
+                </search>
+            </field>
+        </record>
+
+        <record model="ir.actions.act_window" id="hetong_form_action">
+            <field name="name">合同</field>
+            <field name="res_model">hetong</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+            <field name="help" type="html">
+                <p class="oe_view_nocontent_create">点击创建相关员工的合同
+                </p>
+            </field>
+        </record>
+
+        <menuitem id="hetong_menu" name="劳动合同"
+                  parent="menu_hr_hetong"
+                  action="hetong_form_action"/>
+         <!--证照管理-->
+           <record model="ir.ui.view" id="zhengzhao_form_view">
+            <field name="name">zhengzhao.form</field>
+            <field name="model">zhengzhao</field>
+            <field name="arch" type="xml">
+                <form string="Zhengzhao Form">
+                    <header>
+                        <button name="draft" type="workflow"
+                                string="返回修改"
+                                states="confirmed,accepted"/>
+                        <button name="confirm" type="workflow"
+                                string="提交" states="draft"
+                                class="oe_highlight" />
+                        <button name="done" type="workflow"
+                                string="审批完成" states="confirmed"
+                                class="oe_highlight"/>
+
+                        <field name="state" widget="statusbar"/>
+                    </header>
+                    <sheet>
+                        <group string="员工证照">
+                            <group>
+                                <field name="ygxingming"  attrs="{'readonly':[('state','!=','draft')]}"/>
+                                <field name="ygbianhao"  attrs="{'readonly':[('state','!=','draft')]}"/>
+                                <field name="ygbumen"  attrs="{'readonly':[('state','!=','draft')]}"/>
+
+                            </group>
+                            <group>
+                                <field name="yggangwei"  attrs="{'readonly':[('state','!=','draft')]}"/>
+                                <field name="shifoutegang"  attrs="{'readonly':[('state','!=','draft')]}"/>
+
+                            </group>
+                        </group>
+
+
+                        <group string="原件"/>
+                        <field name="yuanjian"/>
+
+
+
+
+
+
+
+
+
+                    </sheet>
+                    <div class="oe_chatter">
+                        <field name="message_follower_ids" widget="mail_followers" groups="base.group_user"/>
+                        <field name="message_ids" widget="mail_thread"/>
+                    </div>
+                </form>
+            </field>
+        </record>
+
+        <record model="ir.ui.view" id="zhengzhao_tree_view">
+            <field name="name">zhengzhao.tree</field>
+            <field name="model">zhengzhao</field>
+            <field name="arch" type="xml">
+                <tree string="证照">
+                    <field name="ygxingming"/>
+                    <field name="ygbianhao"/>
+                    <field name="ygbumen"/>
+                    <field name="yggangwei"/>
+                    <field name="shifoutegang"/>
+                    <field name="state"/>
+                </tree>
+            </field>
+        </record>
+
+
+        <record model="ir.ui.view" id="zhengzhao_search_view">
+            <field name="name">zhengzhao.search</field>
+            <field name="model">zhengzhao</field>
+            <field name="arch" type="xml">
+                <search>
+                     <field name="ygxingming"/>
+                    <field name="ygbianhao"/>
+                    <field name="ygbumen"/>
+                    <field name="yggangwei"/>
+                    <field name="shifoutegang"/>
+                    <field name="state"/>
+                </search>
+            </field>
+        </record>
+
+        <record model="ir.actions.act_window" id="zhengzhao_form_action">
+            <field name="name">证照</field>
+            <field name="res_model">zhengzhao</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+            <field name="help" type="html">
+                <p class="oe_view_nocontent_create">点击创建相关员工证照信息表
+                </p>
+            </field>
+        </record>
+
+        <menuitem id="zhengzhao_menu" name="证照"
+                  parent="menu_hr_zhengzhao"
+                  action="zhengzhao_form_action"/>
+
+         <!--在岗状态管理-->
+        <!--试用考核表-->
+           <record model="ir.ui.view" id="shiyongkaohe_form_view">
+            <field name="name">shiyongkaohe.form</field>
+            <field name="model">shiyongkaohe</field>
+            <field name="arch" type="xml">
+                <form string="试用考核表">
+                    <header>
+                        <button name="draft" type="workflow"
+                                string="返回修改"
+                                states="confirmed,confirmedt,confirmedh"/>
+                        <button name="confirm" type="workflow"
+                                string="提交" states="draft,confirmed,confirmedt"
+                                class="oe_highlight" />
+                        <button name="done" type="workflow"
+                                string="审批完成" states="confirmedh"
+                                class="oe_highlight"/>
+
+                        <field name="state" widget="statusbar"/>
+                    </header>
+
+                    <sheet>
+                        <group string="七天试用期考核表">
+                            <group>
+                                <field name="ygxingming" attrs="{'readonly': [('state', '!=', 'draft')], 'required': [('state', '=', 'draft')]}"/>
+                                <field name="ygbianhao"  attrs="{'readonly': [('state', '!=', 'draft')], 'required': [('state', '=', 'draft')]}"/>
+                                <field name="shixi_from"  attrs="{'readonly': [('state', '!=', 'draft')], 'required': [('state', '=', 'draft')]}"/>
+                            </group>
+                             <group>
+                                <field name="ygbumen"  attrs="{'readonly': [('state', '!=', 'draft')], 'required': [('state', '=', 'draft')]}"/>
+                                <field name="yggangwei"  attrs="{'readonly': [('state', '!=', 'draft')], 'required': [('state', '=', 'draft')]}"/>
+                                 <field name="shixi_to"  attrs="{'readonly': [('state', '!=', 'draft')], 'required': [('state', '=', 'draft')]}"/>
+                            </group>
+                        </group>
+
+
+                        <notebook>
+
+                            <page string="周总结" help="员工自行填写">
+                                <notebook>
+                                    <page string="第一天">
+                                        <field name="one"  attrs="{'readonly': [('state', '!=', 'draft')], 'required': [('state', '=', 'draft')]}"/>
+                                    </page>
+                                </notebook>
+                                <notebook>
+                                    <page string="第二天">
+                                        <field name="two" attrs="{'readonly': [('state', '!=', 'draft')], 'required': [('state', '=', 'draft')]}"/>
+                                    </page>
+                                </notebook>
+                                <notebook>
+                                    <page string="第三天">
+                                        <field name="three"  attrs="{'readonly': [('state', '!=', 'draft')], 'required': [('state', '=', 'draft')]}"/>
+                                    </page>
+                                </notebook>
+                                <notebook>
+                                    <page string="第四天">
+                                        <field name="four"  attrs="{'readonly': [('state', '!=', 'draft')], 'required': [('state', '=', 'draft')]}"/>
+                                    </page>
+                                </notebook>
+                                <notebook>
+                                    <page string="第五天">
+                                        <field name="five"  attrs="{'readonly': [('state', '!=', 'draft')], 'required': [('state', '=', 'draft')]}"/>
+                                    </page>
+                                </notebook>
+                                <notebook>
+                                    <page string="第六天">
+                                        <field name="six"  attrs="{'readonly': [('state', '!=', 'draft')], 'required': [('state', '=', 'draft')]}"/>
+                                    </page>
+                                </notebook>
+                                <notebook>
+                                    <page string="第七天">
+                                        <field name="seven"  attrs="{'readonly': [('state', '!=', 'draft')], 'required': [('state', '=', 'draft')]}"/>
+                                    </page>
+                                </notebook>
+                            </page>
+
+                            <page string="指导人评价">
+                                <group>
+                                    <group>
+                                        <field name="zerenxin"  attrs="{'readonly': [('state', '!=', 'confirmed')], 'required': [('state', '=', 'confirmed')]}"/>
+                                        <field name="jiluxing"  attrs="{'readonly': [('state', '!=', 'confirmed')], 'required': [('state', '=', 'confirmed')]}"/>
+                                        <field name="jieshounengli"  attrs="{'readonly': [('state', '!=', 'confirmed')], 'required': [('state', '=', 'confirmed')]}"/>
+                                    </group>
+                                    <group>
+                                        <field name="gongzuozhiliang"  attrs="{'readonly': [('state', '!=', 'confirmed')], 'required': [('state', '=', 'confirmed')]}"/>
+                                        <field name="xiezuoxing"  attrs="{'readonly': [('state', '!=', 'confirmed')], 'required': [('state', '=', 'confirmed')]}"/>
+                                        <field name="jijixing"  attrs="{'readonly': [('state', '!=', 'confirmed')], 'required': [('state', '=', 'confirmed')]}"/>
+                                    </group>
+                                    <field name="zongping"  attrs="{'readonly': [('state', '!=', 'confirmed')], 'required': [('state', '=', 'confirmed')]}"/>
+                                    <field name="gongduanzhangqianzi"  attrs="{'readonly': [('state', '!=', 'confirmed')], 'required': [('state', '=', 'confirmed')]}"/>
+                                    <field name="qianziriqi"  attrs="{'readonly': [('state', '!=', 'confirmed')], 'required': [('state', '=', 'confirmed')]}"/>
+                                </group>
+                            </page>
+
+                            <page string="部长意见">
+                                <field name="buzhangyijianshuoming"  attrs="{'readonly': [('state', '!=', 'confirmedt')], 'required': [('state', '=', 'confirmedt')]}"/>
+                                <group>
+                                    <field name="buzhangyijian"  attrs="{'readonly': [('state', '!=', 'confirmedt')], 'required': [('state', '=', 'confirmedt')]}"/>
+                                    <field name="buzhangqianzi"  attrs="{'readonly': [('state', '!=', 'confirmedt')], 'required': [('state', '=', 'confirmedt')]}"/>
+                                </group>
+
+                            </page>
+                            <page string="人力资源部意见">
+                                <field name="renliziyuanbuyijianshuoming"  attrs="{'readonly': [('state', '!=', 'confirmedh')], 'required': [('state', '=', 'confirmedh')]}"/>
+                                <group>
+                                    <field name="renliziyuanbuyijian"  attrs="{'readonly': [('state', '!=', 'confirmedh')], 'required': [('state', '=', 'confirmedh')]}"/>
+                                </group>
+
+                            </page>
+                            <page string="备注">
+                                <field name="shuoming"  attrs="{'readonly': [('state', '!=', 'confirmedh')], 'required': [('state', '=', 'confirmedh')]}"/>
+                            </page>
+                        </notebook>
+                    </sheet>
+                    <div class="oe_chatter">
+                        <field name="message_follower_ids" widget="mail_followers" groups="base.group_user"/>
+                        <field name="message_ids" widget="mail_thread"/>
+                    </div>
+                </form>
+            </field>
+        </record>
+
+        <record model="ir.ui.view" id="shiyongkaohe_tree_view">
+            <field name="name">shiyongkaohe.tree</field>
+            <field name="model">shiyongkaohe</field>
+            <field name="arch" type="xml">
+                <tree string="试用考核表">
+                    <field name="ygxingming"/>
+                    <field name="ygbianhao"/>
+                    <field name="ygbumen"/>
+                    <field name="yggangwei"/>
+                    <field name="state"/>
+                </tree>
+            </field>
+        </record>
+
+
+        <record model="ir.ui.view" id="shiyongkaohe_search_view">
+            <field name="name">shiyongkaohe.search</field>
+            <field name="model">shiyongkaohe</field>
+            <field name="arch" type="xml">
+                <search>
+                     <field name="ygxingming"/>
+                    <field name="ygbianhao"/>
+                    <field name="ygbumen"/>
+                    <field name="yggangwei"/>
+                </search>
+            </field>
+        </record>
+
+        <record model="ir.actions.act_window" id="shiyongkaohe_form_action">
+            <field name="name">试用考核</field>
+            <field name="res_model">shiyongkaohe</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+            <field name="help" type="html">
+                <p class="oe_view_nocontent_create">点击创建七天试用考核表
+                </p>
+            </field>
+        </record>
+
+        <menuitem id="shiyongkaohe_menu" name="七天试用考核表"
+                  parent="menu_hr_zaigangzhuangtai"
+                  action="shiyongkaohe_form_action"/>
+        <!--转正申请考核表-->
+           <record model="ir.ui.view" id="zhuanzhengshenqing_form_view">
+            <field name="name">zhuanzhengshenqing.form</field>
+            <field name="model">zhuanzhengshenqing</field>
+            <field name="arch" type="xml">
+                <form string="转正申请表">
+                    <header>
+                        <button name="draft" type="workflow"
+                                string="返回修改"
+                                states="confirmed,confirmedt,confirmedh,confirmedf" groups="base.group_hr_manager"/>
+                        <button name="confirm" type="workflow"
+                                string="提交" states="draft,confirmed,confirmedt,confirmedh"
+                                class="oe_highlight" />
+                        <button name="done" type="workflow"
+                                string="审批完成" states="confirmedf"
+                                class="oe_highlight" groups="base.group_hr_manager"/>
+
+                        <field name="state" widget="statusbar"/>
+                    </header>
+                    <sheet>
+                        <group string="转正申请表">
+                            <group>
+                                <field name="ygxingming"  attrs="{'readonly': [('state', '!=', 'draft')], 'required': [('state', '=', 'draft')]}"/>
+                                <field name="ygbianhao"  attrs="{'readonly': [('state', '!=', 'draft')], 'required': [('state', '=', 'draft')]}"/>
+                                <field name="xingbie"  attrs="{'readonly': [('state', '!=', 'draft')], 'required': [('state', '=', 'draft')]}"/>
+                                <field name="ruzhishijian"  attrs="{'readonly': [('state', '!=', 'draft')], 'required': [('state', '=', 'draft')]}"/>
+                            </group>
+                             <group>
+                                <field name="ygbumen"  attrs="{'readonly': [('state', '!=', 'draft')], 'required': [('state', '=', 'draft')]}"/>
+                                <field name="yggangwei"  attrs="{'readonly': [('state', '!=', 'draft')], 'required': [('state', '=', 'draft')]}"/>
+                                 <field name="zuigaoxueli"  attrs="{'readonly': [('state', '!=', 'draft')], 'required': [('state', '=', 'draft')]}"/>
+                            </group>
+                        </group>
+                        <notebook>
+                            <page string="个人自我鉴定">
+                                <field name="ziwojianding"  attrs="{'readonly': [('state', '!=', 'draft')], 'required': [('state', '=', 'draft')]}"/>
+                                <group>
+                                    <field name="benrenqianzi"  attrs="{'readonly': [('state', '!=', 'draft')], 'required': [('state', '=', 'draft')]}"/>
+                                    <field name="riqi1"  attrs="{'readonly': [('state', '!=', 'draft')], 'required': [('state', '=', 'draft')]}"/>
+                                </group>
+
+                            </page>
+                            <page string="直接上级评价">
+                                <field name="shangjipingjia"  attrs="{'readonly': [('state', '!=', 'confirmed')], 'required': [('state', '=', 'confirmed')]}"/>
+                                <group>
+                                    <field name="kaoheyijian"  attrs="{'readonly': [('state', '!=', 'confirmed')], 'required': [('state', '=', 'confirmed')]}"/>
+                                    <field name="shangjiqianzi"  attrs="{'readonly': [('state', '!=', 'confirmed')], 'required': [('state', '=', 'confirmed')]}"/>
+                                    <field name="riqier"  attrs="{'readonly': [('state', '!=', 'confirmed')], 'required': [('state', '=', 'confirmed')]}"/>
+                                </group>
+
+                            </page>
+                            <page string="部长审核">
+                                <field name="buzhangshenhe"  attrs="{'readonly': [('state', '!=', 'confirmedt')], 'required': [('state', '=', 'confirmedt')]}"/>
+                                <group>
+                                    <field name="kaoheyijianer"  attrs="{'readonly': [('state', '!=', 'confirmedt')], 'required': [('state', '=', 'confirmedt')]}"/>
+                                    <field name="buzhangqianzi"  attrs="{'readonly': [('state', '!=', 'confirmedt')], 'required': [('state', '=', 'confirmedt')]}"/>
+                                    <field name="riqisan"  attrs="{'readonly': [('state', '!=', 'confirmedt')], 'required': [('state', '=', 'confirmedt')]}"/>
+                                </group>
+
+                            </page>
+                            <page string="分管领导审核">
+                                <field name="lingdaoshenhe"  attrs="{'readonly': [('state', '!=', 'confirmedh')], 'required': [('state', '=', 'confirmedh')]}"/>
+                                <group>
+                                    <field name="kaoheyijiansan"  attrs="{'readonly': [('state', '!=', 'confirmedh')], 'required': [('state', '=', 'confirmedh')]}"/>
+                                    <field name="lingdaoqianzi"  attrs="{'readonly': [('state', '!=', 'confirmedh')], 'required': [('state', '=', 'confirmedh')]}"/>
+                                    <field name="riqisi"  attrs="{'readonly': [('state', '!=', 'confirmedh')], 'required': [('state', '=', 'confirmedh')]}"/>
+                                </group>
+
+                            </page>
+                            <page string="人力资源部审核">
+                                <field name="rlzybsh"  attrs="{'readonly': [('state', '!=', 'confirmedf')], 'required': [('state', '=', 'confirmedf')]}"/>
+                                <group>
+                                    <field name="kaoheyijiansi"  attrs="{'readonly': [('state', '!=', 'confirmedf')], 'required': [('state', '=', 'confirmedf')]}"/>
+                                    <field name="rlzyqz"  attrs="{'readonly': [('state', '!=', 'confirmedf')], 'required': [('state', '=', 'confirmedf')]}"/>
+                                    <field name="riqiwu"  attrs="{'readonly': [('state', '!=', 'confirmedf')], 'required': [('state', '=', 'confirmedf')]}"/>
+                                </group>
+
+                            </page>
+                        </notebook>
+                    </sheet>
+                    <div class="oe_chatter">
+                        <field name="message_follower_ids" widget="mail_followers" groups="base.group_user"/>
+                        <field name="message_ids" widget="mail_thread"/>
+                    </div>
+                </form>
+            </field>
+</record>
+
+        <record model="ir.ui.view" id="zhuanzhengshenqing_tree_view">
+            <field name="name">zhuanzhengshenqing.tree</field>
+            <field name="model">zhuanzhengshenqing</field>
+            <field name="arch" type="xml">
+                <tree string="转正申请表">
+                    <field name="ygxingming"/>
+                    <field name="ygbianhao"/>
+                    <field name="ygbumen"/>
+                    <field name="yggangwei"/>
+                    <field name="ruzhishijian"/>
+                    <field name="state"/>
+                </tree>
+            </field>
+        </record>
+
+
+        <record model="ir.ui.view" id="zhuanzhengshenqing_search_view">
+            <field name="name">zhuanzhengshenqing.search</field>
+            <field name="model">zhuanzhengshenqing</field>
+            <field name="arch" type="xml">
+                <search>
+                     <field name="ygxingming"/>
+                    <field name="ygbianhao"/>
+                    <field name="ygbumen"/>
+                    <field name="yggangwei"/>
+                    <field name="ruzhishijian"/>
+                    <field name="state"/>
+                </search>
+            </field>
+        </record>
+
+        <record model="ir.actions.act_window" id="zhuanzhengshenqing_form_action">
+            <field name="name">转正申请表</field>
+            <field name="res_model">zhuanzhengshenqing</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+            <field name="help" type="html">
+                <p class="oe_view_nocontent_create">点击创建转正申请表
+                </p>
+            </field>
+        </record>
+
+        <menuitem id="zhuanzhengshenqing_menu" name="转正申请表"
+                          parent="menu_hr_zaigangzhuangtai"
+                          action="zhuanzhengshenqing_form_action"/>
+        <!--调岗申请表-->
+           <record model="ir.ui.view" id="tiaogangshenqing_form_view">
+            <field name="name">tiaogangshenqing.form</field>
+            <field name="model">tiaogang</field>
+            <field name="arch" type="xml">
+                <form string="调岗申请表">
+                    <header>
+                        <button name="draft" type="workflow"
+                                string="返回修改"
+                                states="confirmed,confirmedt,confirmedh,confirmedf,confirmedi,confirmeds"/>
+                        <button name="confirm" type="workflow"
+                                string="提交" states="draft,confirmed,confirmedt,confirmedh,confirmedf,confirmedi"
+                                class="oe_highlight" />
+                        <button name="done" type="workflow"
+                                string="审批完成" states="confirmeds"
+                                class="oe_highlight"/>
+
+                        <field name="state" widget="statusbar"/>
+                    </header>
+                    <sheet>
+                        <group string="调岗申请表">
+                            <group>
+                                <field name="shenqingren"  attrs="{'readonly': [('state', '!=', 'draft')], 'required': [('state', '=', 'draft')]}"/>
+                                <field name="yuanbumen"  attrs="{'readonly': [('state', '!=', 'draft')], 'required': [('state', '=', 'draft')]}"/>
+                                <field name="yuangangwei"  attrs="{'readonly': [('state', '!=', 'draft')], 'required': [('state', '=', 'draft')]}"/>
+                            </group>
+                             <group>
+                                 <field name="shenqingriqi"  attrs="{'readonly': [('state', '!=', 'draft')], 'required': [('state', '=', 'draft')]}"/>
+                                <field name="tiaozhihebumen"  attrs="{'readonly': [('state', '!=', 'draft')], 'required': [('state', '=', 'draft')]}"/>
+                                <field name="tiaoganghouzhiweimingcheng"  attrs="{'readonly': [('state', '!=', 'draft')], 'required': [('state', '=', 'draft')]}"/>
+
+                            </group>
+                        </group>
+                        <notebook>
+                            <page string="调岗原因">
+                                <field name="tiaogangyuanyin"  attrs="{'readonly': [('state', '!=', 'draft')], 'required': [('state', '=', 'draft')]}"/>
+                                <group>
+                                    <field name="shenqingrenqianming"  attrs="{'readonly': [('state', '!=', 'draft')], 'required': [('state', '=', 'draft')]}"/>
+                                    <field name="shenqingrenqianmingriqi"  attrs="{'readonly': [('state', '!=', 'draft')], 'required': [('state', '=', 'draft')]}"/>
+                                </group>
+
+                            </page>
+                            <page string="工段长建议">
+                                <notebook>
+                                        <page string="原直属部门工段长意见">
+                                                <field name="yuanzhishubumengongduanzhangjianyi"  attrs="{'readonly': [('state', '!=', 'confirmed')], 'required': [('state', '=', 'confirmed')]}"/>
+                                            <group>
+                                                <field name="shifoutongyibenrenzhuangang"  attrs="{'readonly': [('state', '!=', 'confirmed')], 'required': [('state', '=', 'confirmed')]}"/>
+                                                <field name="yuanbumengongduanzhangqianzi"  attrs="{'readonly': [('state', '!=', 'confirmed')], 'required': [('state', '=', 'confirmed')]}"/>
+                                                <field name="yuanbumengongduanzhangqianziriqi"  attrs="{'readonly': [('state', '!=', 'confirmed')], 'required': [('state', '=', 'confirmed')]}"/>
+                                            </group>
+                                        </page>
+                                     <page string="拟转岗部门工段长意见">
+                                                <field name="nizhuangangweibumengongduanzhangyijian"  attrs="{'readonly': [('state', '!=', 'confirmedt')], 'required': [('state', '=', 'confirmedt')]}"/>
+                                            <group>
+
+                                                <field name="nizhuangangweigongduanzhangqianzi"  attrs="{'readonly': [('state', '!=', 'confirmedt')], 'required': [('state', '=', 'confirmedt')]}"/>
+                                                <field name="nizhuangangweigongduanzhangqianziriqi"  attrs="{'readonly': [('state', '!=', 'confirmedt')], 'required': [('state', '=', 'confirmedt')]}"/>
+                                            </group>
+                                        </page>
+                                </notebook>
+
+
+                            </page>
+                            <page string="部长意见">
+                                <notebook>
+                                        <page string="原直属部门部长意见">
+                                                <field name="yuanzhishubumenbuzhangyijian"  attrs="{'readonly': [('state', '!=', 'confirmedh')], 'required': [('state', '=', 'confirmedh')]}"/>
+                                            <group>
+                                                <field name="shifoutongyibenrenzhuangang2"  attrs="{'readonly': [('state', '!=', 'confirmedh')], 'required': [('state', '=', 'confirmedh')]}"/>
+                                                <field name="yuanzhishubumenbuzhangqianzi"  attrs="{'readonly': [('state', '!=', 'confirmedh')], 'required': [('state', '=', 'confirmedh')]}"/>
+                                                <field name="yuanzhishubumenbuzhangqianziriqi"  attrs="{'readonly': [('state', '!=', 'confirmedh')], 'required': [('state', '=', 'confirmedh')]}"/>
+                                            </group>
+                                        </page>
+                                     <page string="拟转岗部门部长意见">
+                                                <field name="nizhuangangbumenbuzhangyijian"  attrs="{'readonly': [('state', '!=', 'confirmedf')], 'required': [('state', '=', 'confirmedf')]}"/>
+                                            <group>
+
+                                                <field name="nizhuangangbumenbuzhangqianzi"   attrs="{'readonly': [('state', '!=', 'confirmedf')], 'required': [('state', '=', 'confirmedf')]}"/>
+                                                <field name="nizhuangangbumenbuzhangqianziriqi"  attrs="{'readonly': [('state', '!=', 'confirmedf')], 'required': [('state', '=', 'confirmedf')]}"/>
+                                            </group>
+                                        </page>
+                                </notebook>
+
+
+                            </page>
+                            <page string="分管领导意见">
+                                <notebook>
+                                        <page string="原直属部门分管领导意见">
+                                                <field name="yuangangweifenguanlingdaoyijian"  attrs="{'readonly': [('state', '!=', 'confirmedi')], 'required': [('state', '=', 'confirmedi')]}"/>
+                                            <group>
+                                                <field name="shifoutongyizhuangang3" attrs="{'readonly': [('state', '!=', 'confirmedi')], 'required': [('state', '=', 'confirmedi')]}"/>
+                                                <field name="yuangangweifenguanlingdaoqianzi"  attrs="{'readonly': [('state', '!=', 'confirmedi')], 'required': [('state', '=', 'confirmedi')]}"/>
+                                                <field name="yuangangweifenguanlingdaoqianziriqi"  attrs="{'readonly': [('state', '!=', 'confirmedi')], 'required': [('state', '=', 'confirmedi')]}"/>
+                                            </group>
+                                        </page>
+                                     <page string="拟转岗部门分管领导意见">
+                                                <field name="nizhuangangfenguanlingdaoyijian"  attrs="{'readonly': [('state', '!=', 'confirmeds')], 'required': [('state', '=', 'confirmeds')]}"/>
+                                            <group>
+
+                                                <field name="nizhuangangfenguanlingdaoqianzi"  attrs="{'readonly': [('state', '!=', 'confirmeds')], 'required': [('state', '=', 'confirmeds')]}"/>
+                                                <field name="nizhuangangfenguanlingdaoqianziriqi"  attrs="{'readonly': [('state', '!=', 'confirmeds')], 'required': [('state', '=', 'confirmeds')]}"/>
+                                            </group>
+                                        </page>
+                                </notebook>
+
+
+                            </page>
+                             <notebook>
+                                    <page string="人力资源部备注并存档">
+                                        <field name="renliziyuanbucundang"  attrs="{'readonly': [('state', '!=', 'done')], 'required': [('state', '=', 'done')]}"/>
+                                    </page>
+                             </notebook>
+
+                        </notebook>
+
+                    </sheet>
+                    <div class="oe_chatter">
+                        <field name="message_follower_ids" widget="mail_followers" groups="base.group_user"/>
+                        <field name="message_ids" widget="mail_thread"/>
+                    </div>
+
+                </form>
+            </field>
+    </record>
+<record model="ir.ui.view" id="tiaogangshenqing_tree_view">
+            <field name="name">tiaogangshenqing.tree</field>
+            <field name="model">tiaogang</field>
+            <field name="arch" type="xml">
+                <tree string="调岗申请表">
+                    <field name="shenqingren"/>
+                    <field name="shenqingriqi"/>
+                    <field name="yuanbumen"/>
+                    <field name="yuangangwei"/>
+                    <field name="tiaozhihebumen"/>
+
+                </tree>
+            </field>
+        </record>
+
+
+        <record model="ir.ui.view" id="tiaogangshenqing_search_view">
+            <field name="name">tiaogangshenqing.search</field>
+            <field name="model">tiaogang</field>
+            <field name="arch" type="xml">
+                <search>
+                     <field name="shenqingren"/>
+                    <field name="shenqingriqi"/>
+                    <field name="yuanbumen"/>
+                    <field name="yuangangwei"/>
+                    <field name="tiaozhihebumen"/>
+
+                </search>
+            </field>
+        </record>
+
+        <record model="ir.actions.act_window" id="tiaogangshenqing_form_action">
+            <field name="name">调岗申请表</field>
+            <field name="res_model">tiaogang</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+            <field name="help" type="html">
+                <p class="oe_view_nocontent_create">点击创建调岗申请表
+                </p>
+            </field>
+        </record>
+
+        <menuitem id="tiaogangshenqing_menu" name="调岗申请表"
+                          parent="menu_hr_zaigangzhuangtai"
+                          action="tiaogangshenqing_form_action"/>
+        <!--晋升申请表-->
+           <record model="ir.ui.view" id="jinshengshenqing_form_view">
+            <field name="name">jinshengshenqing.form</field>
+            <field name="model">jinsheng</field>
+            <field name="arch" type="xml">
+                <form string="晋升申请表">
+                    <header>
+                        <button name="draft" type="workflow"
+                                string="返回修改"
+                                states="confirmed,confirmedt,confirmedh,confirmedf" groups="base.group_hr_manager"/>
+                        <button name="confirm" type="workflow"
+                                string="提交" states="draft,confirmed,confirmedt,confirmedh"
+                                class="oe_highlight" />
+                        <button name="done" type="workflow"
+                                string="审批完成" states="confirmedf"
+                                class="oe_highlight" groups="base.group_hr_manager"/>
+
+                        <field name="state" widget="statusbar"/>
+                    </header>
+
+                    <sheet>
+                        <group string="晋升申请表">
+                            <group>
+                                <field name="ygxingming"  attrs="{'readonly': [('state', '!=', 'draft')], 'required': [('state', '=', 'draft')]}"/>
+                                <field name="yuanbumen"  attrs="{'readonly': [('state', '!=', 'draft')], 'required': [('state', '=', 'draft')]}"/>
+                                <field name="yuanzhiwei"  attrs="{'readonly': [('state', '!=', 'draft')], 'required': [('state', '=', 'draft')]}"/>
+                                <field name="ruzhishijian"  attrs="{'readonly': [('state', '!=', 'draft')], 'required': [('state', '=', 'draft')]}"/>
+                            </group>
+                             <group>
+                                 <field name="bianhao"  attrs="{'readonly': [('state', '!=', 'draft')], 'required': [('state', '=', 'draft')]}"/>
+                                <field name="jinshenbumen"  attrs="{'readonly': [('state', '!=', 'draft')], 'required': [('state', '=', 'draft')]}"/>
+                                 <field name="jinshengzhiwei"  attrs="{'readonly': [('state', '!=', 'draft')], 'required': [('state', '=', 'draft')]}"/>
+                                 <field name="renzhiqi"  attrs="{'readonly': [('state', '!=', 'draft')], 'required': [('state', '=', 'draft')]}"/>
+
+                            </group>
+                        </group>
+                        <notebook>
+                            <page string="个人总结与晋升申请">
+                                <field name="gerenongjieyujinshengshenqing" attrs="{'readonly': [('state', '!=', 'draft')], 'required': [('state', '=', 'draft')]}"/>
+                                <group>
+                                    <field name="gerenqianzi"  attrs="{'readonly': [('state', '!=', 'draft')], 'required': [('state', '=', 'draft')]}"/>
+                                    <field name="gerenqianziriqi"  attrs="{'readonly': [('state', '!=', 'draft')], 'required': [('state', '=', 'draft')]}"/>
+                                </group>
+                            </page>
+
+                             <page string="工段长意见">
+                                <field name="gongduanzhangyijian"  attrs="{'readonly': [('state', '!=', 'confirmed')], 'required': [('state', '=', 'confirmed')]}"/>
+                                <group>
+                                    <field name="gongduanzhangqianzi"  attrs="{'readonly': [('state', '!=', 'confirmed')], 'required': [('state', '=', 'confirmed')]}"/>
+                                    <field name="gongduanzhangqianziriqi"  attrs="{'readonly': [('state', '!=', 'confirmed')], 'required': [('state', '=', 'confirmed')]}"/>
+                                </group>
+                            </page>
+
+                            <page string="部长意见">
+                                <field name="buzhangyijian"  attrs="{'readonly': [('state', '!=', 'confirmedt')], 'required': [('state', '=', 'confirmedt')]}"/>
+                                <group>
+                                    <field name="buzhangqianzi"  attrs="{'readonly': [('state', '!=', 'confirmedt')], 'required': [('state', '=', 'confirmedt')]}"/>
+                                    <field name="buhangqianziriqi"  attrs="{'readonly': [('state', '!=', 'confirmedt')], 'required': [('state', '=', 'confirmedt')]}"/>
+                                </group>
+                            </page>
+
+                             <page string="分管副总意见">
+                                <field name="fenbufuzong"  attrs="{'readonly': [('state', '!=', 'confirmedh')], 'required': [('state', '=', 'confirmedh')]}"/>
+                                <group>
+                                    <field name="fenguanfuzongqianzi"  attrs="{'readonly': [('state', '!=', 'confirmedh')], 'required': [('state', '=', 'confirmedh')]}"/>
+                                    <field name="fenguanfuzongqianziriqi"  attrs="{'readonly': [('state', '!=', 'confirmedh')], 'required': [('state', '=', 'confirmedh')]}"/>
+                                </group>
+                            </page>
+
+                            <page string="总经理意见">
+                                <field name="zongjingli"  attrs="{'readonly': [('state', '!=', 'confirmedf')], 'required': [('state', '=', 'confirmedf')]}"/>
+                                <group>
+                                    <field name="zongjingliqianzi"  attrs="{'readonly': [('state', '!=', 'confirmedf')], 'required': [('state', '=', 'confirmedf')]}"/>
+                                    <field name="zongjingliqianziriqi"  attrs="{'readonly': [('state', '!=', 'confirmedf')], 'required': [('state', '=', 'confirmedf')]}"/>
+                                </group>
+                            </page>
+
+
+                        </notebook>
+
+                    </sheet>
+                    <div class="oe_chatter">
+                        <field name="message_follower_ids" widget="mail_followers" groups="base.group_user"/>
+                        <field name="message_ids" widget="mail_thread"/>
+                    </div>
+                </form>
+            </field>
+</record>
+
+        <record model="ir.ui.view" id="jinshengshenqing_tree_view">
+            <field name="name">jinsheng.tree</field>
+            <field name="model">jinsheng</field>
+            <field name="arch" type="xml">
+                <tree string="晋升申请表">
+                    <field name="ygxingming"/>
+                    <field name="yuanbumen"/>
+                    <field name="yuanzhiwei"/>
+                    <field name="ruzhishijian"/>
+                    <field name="bianhao"/>
+                    <field name="jinshenbumen"/>
+                    <field name="jinshengzhiwei"/>
+                    <field name="renzhiqi"/>
+                    <field name="state"/>
+                </tree>
+            </field>
+        </record>
+
+
+        <record model="ir.ui.view" id="jinshengshenqing_search_view">
+            <field name="name">jinsheng.search</field>
+            <field name="model">jinsheng</field>
+            <field name="arch" type="xml">
+                <search>
+                    <field name="ygxingming"/>
+                    <field name="yuanbumen"/>
+                    <field name="yuanzhiwei"/>
+                    <field name="ruzhishijian"/>
+                    <field name="bianhao"/>
+                    <field name="jinshenbumen"/>
+                    <field name="jinshengzhiwei"/>
+                    <field name="renzhiqi"/>
+                    <field name="state"/>
+                </search>
+            </field>
+        </record>
+
+        <record model="ir.actions.act_window" id="jinshengshenqing_form_action">
+            <field name="name">晋升申请表</field>
+            <field name="res_model">jinsheng</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+            <field name="help" type="html">
+                <p class="oe_view_nocontent_create">点击创建晋升申请表
+                </p>
+            </field>
+        </record>
+
+        <menuitem id="jinshengshenqing_menu" name="晋升申请表"
+                          parent="menu_hr_zaigangzhuangtai"
+                          action="jinshengshenqing_form_action"/>
+
+
+
+        <!--离职申请表-->
+           <record model="ir.ui.view" id="lizhishenqing_form_view">
+            <field name="name">lizhishenqing.form</field>
+            <field name="model">lizhijiaojie</field>
+            <field name="arch" type="xml">
+                <form string="员工离职交接清单">
+                    <header>
+                        <button name="draft" type="workflow"
+                                string="返回修改"
+                                states="confirmed,confirmedt,confirmedh,confirmedf,confirmedi,confirmeds,confirmede" groups="base.group_hr_manager"/>
+                        <button name="confirm" type="workflow"
+                                string="提交" states="draft,confirmed,confirmedt,confirmedh,confirmedf,confirmedi,confirmeds"
+                                class="oe_highlight" />
+                        <button name="done" type="workflow"
+                                string="审批完成" states="confirmed7"
+                                class="oe_highlight" groups="base.group_hr_manager"/>
+
+                        <field name="state" widget="statusbar"/>
+                    </header>
+                    <sheet>
+                        <group string="员工离职交接清单">
+                            <group>
+                                <field name="lizhirenxingming"  attrs="{'readonly': [('state', '!=', 'draft')], 'required': [('state', '=', 'draft')]}"/>
+                                <field name="yuanbumeng"  attrs="{'readonly': [('state', '!=', 'draft')], 'required': [('state', '=', 'draft')]}"/>
+
+                            </group>
+                             <group>
+                                 <field name="yuangongbianhao"  attrs="{'readonly': [('state', '!=', 'draft')], 'required': [('state', '=', 'draft')]}"/>
+                                <field name="yuangangwei"  attrs="{'readonly': [('state', '!=', 'draft')], 'required': [('state', '=', 'draft')]}"/>
+                                 <field name="lizhishijian"  attrs="{'readonly': [('state', '!=', 'draft')], 'required': [('state', '=', 'draft')]}"/>
+                             </group>
+                        </group>
+                        <notebook string="离职会签部门">
+                            <page string="所属部门工段长">
+                                <group>
+                                    <group>
+                                        <field name="gongzuojiaojie"  attrs="{'readonly': [('state', '!=', 'confirmed')], 'required': [('state', '=', 'confirmed')]}"/>
+                                        <field name="yiqideng"  attrs="{'readonly': [('state', '!=', 'confirmed')], 'required': [('state', '=', 'confirmed')]}"/>
+                                        <field name="bangongyaoshi"  attrs="{'readonly': [('state', '!=', 'confirmed')], 'required': [('state', '=', 'confirmed')]}"/>
+                                    </group>
+
+                                    <group>
+                                        <field name="gongduanzhangqianzi"  attrs="{'readonly': [('state', '!=', 'confirmed')], 'required': [('state', '=', 'confirmed')]}"/>
+                                        <field name="gongduanzhangqianziriqi"  attrs="{'readonly': [('state', '!=', 'confirmed')], 'required': [('state', '=', 'confirmed')]}"/>
+                                    </group>
+                                </group>
+
+                            </page>
+
+                             <page string="采购部">
+                                 <group>
+                                     <group>
+                                        <field name="Upan"  attrs="{'readonly': [('state', '!=', 'confirmedt')], 'required': [('state', '=', 'confirmedt')]}"/>
+                                     </group>
+
+                                    <group>
+                                        <field name="caigoubuqianzi"  attrs="{'readonly': [('state', '!=', 'confirmedt')], 'required': [('state', '=', 'confirmedt')]}"/>
+                                        <field name="caigoubuqianziriqi"  attrs="{'readonly': [('state', '!=', 'confirmedt')], 'required': [('state', '=', 'confirmedt')]}"/>
+                                    </group>
+                                 </group>
+
+                            </page>
+
+                            <page string="所属部门部长">
+                                <field name="suoshubumenbuzhang"  attrs="{'readonly': [('state', '!=', 'confirmedh')], 'required': [('state', '=', 'confirmedh')]}"/>
+                                <group>
+                                    <field name="buzhangqianzi"  attrs="{'readonly': [('state', '!=', 'confirmedh')], 'required': [('state', '=', 'confirmedh')]}"/>
+                                    <field name="buzhangqianziriqi"  attrs="{'readonly': [('state', '!=', 'confirmedh')], 'required': [('state', '=', 'confirmedh')]}"/>
+                                </group>
+                            </page>
+
+                             <page string="后勤部">
+                                <field name="houqingbu"  attrs="{'readonly': [('state', '!=', 'confirmedf')], 'required': [('state', '=', 'confirmedf')]}"/>
+                                <group>
+                                    <field name="houqinbuqianzi"  attrs="{'readonly': [('state', '!=', 'confirmedf')], 'required': [('state', '=', 'confirmedf')]}"/>
+                                    <field name="houqinbuqianziriqi"  attrs="{'readonly': [('state', '!=', 'confirmedf')], 'required': [('state', '=', 'confirmedf')]}"/>
+                                </group>
+                            </page>
+
+                            <page string="财务部">
+                                <field name="caiwubu"  attrs="{'readonly': [('state', '!=', 'confirmedi')], 'required': [('state', '=', 'confirmedi')]}"/>
+                                <group>
+                                    <field name="caiwubuqianzi"  attrs="{'readonly': [('state', '!=', 'confirmedi')], 'required': [('state', '=', 'confirmedi')]}"/>
+                                    <field name="caiwubuqianziriqi"  attrs="{'readonly': [('state', '!=', 'confirmedi')], 'required': [('state', '=', 'confirmedi')]}"/>
+                                </group>
+                            </page>
+
+                            <page string="分管领导">
+                                <field name="fenguanlingdao"  attrs="{'readonly': [('state', '!=', 'confirmeds')], 'required': [('state', '=', 'confirmeds')]}"/>
+                                <group>
+                                    <field name="fenguanlingdaoqianzi"  attrs="{'readonly': [('state', '!=', 'confirmeds')], 'required': [('state', '=', 'confirmeds')]}"/>
+                                    <field name="fenguanlingdaoqianziriqi"  attrs="{'readonly': [('state', '!=', 'confirmeds')], 'required': [('state', '=', 'confirmeds')]}"/>
+                                </group>
+                            </page>
+
+                            <page string="人力资源部">
+                                <group>
+                                    <field name="tongxungongju"  attrs="{'readonly': [('state', '!=', 'confirmede')], 'required': [('state', '=', 'confirmede')]}"/>
+                                    <field name="gongzhuang"  attrs="{'readonly': [('state', '!=', 'confirmede')], 'required': [('state', '=', 'confirmede')]}"/>
+                                    <field name="fanka"  attrs="{'readonly': [('state', '!=', 'confirmede')], 'required': [('state', '=', 'confirmede')]}"/>
+                                    <field name="laodonghetong"  attrs="{'readonly': [('state', '!=', 'confirmede')], 'required': [('state', '=', 'confirmede')]}"/>
+                                    <field name="jiechuzhongzhilaodonghetongzhengmingsu"  attrs="{'readonly': [('state', '!=', 'confirmede')], 'required': [('state', '=', 'confirmede')]}"/>
+                                    <field name="qita"  attrs="{'readonly': [('state', '!=', 'confirmede')], 'required': [('state', '=', 'confirmede')]}"/>
+                                </group>
+
+                            </page>
+
+                            <page string="备注">
+                                <field name="beizhu"  attrs="{'readonly': [('state', '!=', 'confirmede')], 'required': [('state', '=', 'confirmede')]}"/>
+                            </page>
+
+
+                        </notebook>
+
+                    </sheet>
+                    <div class="oe_chatter">
+                        <field name="message_follower_ids" widget="mail_followers" groups="base.group_user"/>
+                        <field name="message_ids" widget="mail_thread"/>
+                    </div>
+
+                </form>
+            </field>
+</record>
+
+        <record model="ir.ui.view" id="lizhishenqing_tree_view">
+            <field name="name">lizhi.tree</field>
+            <field name="model">lizhijiaojie</field>
+            <field name="arch" type="xml">
+                <tree string="离职申请表">
+                    <field name="lizhirenxingming"/>
+                    <field name="yuanbumeng"/>
+                    <field name="yuangongbianhao"/>
+                    <field name="yuangangwei"/>
+                    <field name="lizhishijian"/>
+                    <field name="state"/>
+                </tree>
+            </field>
+        </record>
+
+
+        <record model="ir.ui.view" id="lizhi_search_view">
+            <field name="name">lizhi.search</field>
+            <field name="model">lizhijiaojie</field>
+            <field name="arch" type="xml">
+                <search>
+                    <field name="lizhirenxingming"/>
+                    <field name="yuanbumeng"/>
+                    <field name="yuangongbianhao"/>
+                    <field name="yuangangwei"/>
+                    <field name="lizhishijian"/>
+                    <field name="state"/>
+                </search>
+            </field>
+        </record>
+
+        <record model="ir.actions.act_window" id="lizhishenqing_form_action">
+            <field name="name">离职申请表</field>
+            <field name="res_model">lizhijiaojie</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+            <field name="help" type="html">
+                <p class="oe_view_nocontent_create">点击创建离职申请表
+                </p>
+            </field>
+        </record>
+
+        <menuitem id="lizhishenqing_menu" name="离职申请表"
+                          parent="menu_hr_zaigangzhuangtai"
+                          action="lizhishenqing_form_action"/>
+
+
+
+         <!--招聘管理-->
+           <record model="ir.ui.view" id="zhaopin_form_view">
+            <field name="name">zhaopin.form</field>
+            <field name="model">renlixuqiu</field>
+            <field name="arch" type="xml">
+                <form string="人员需求确认单">
+                    <header>
+                        <button name="draft" type="workflow"
+                                string="返回修改"
+                                states="confirmed,confirmedt,confirmedh"/>
+                        <button name="confirm" type="workflow"
+                                string="提交" states="draft,confirmed,confirmedt"
+                                class="oe_highlight" />
+                        <button name="done" type="workflow"
+                                string="审批完成" states="confirmedh"
+                                class="oe_highlight"/>
+
+                        <field name="state" widget="statusbar"/>
+                    </header>
+
+                    <sheet string="人员需求确认单">
+                        <group string="人员需求确认单"/>
+
+                        <notebook>
+                            <page string="需求人员信息">
+                                <group string="需求人员信息">
+                                    <field name="zhiwei"  attrs="{'readonly': [('state', '!=', 'draft')], 'required': [('state', '=', 'draft')]}"/>
+                                    <field name="renshu"  attrs="{'readonly': [('state', '!=', 'draft')], 'required': [('state', '=', 'draft')]}"/>
+                                    <field name="riqi"  attrs="{'readonly': [('state', '!=', 'draft')], 'required': [('state', '=', 'draft')]}"/>
+                                    <field name="zhijieshangji"  attrs="{'readonly': [('state', '!=', 'draft')], 'required': [('state', '=', 'draft')]}"/>
+                                    <field name="xiwangdaogangshijian"  attrs="{'readonly': [('state', '!=', 'draft')], 'required': [('state', '=', 'draft')]}"/>
+                                </group>
+
+                            </page>
+
+                            <page string="任职要求">
+                                <group>
+                                    <group string="要求">
+                                    <field name="xingbie"  attrs="{'readonly': [('state', '!=', 'draft')], 'required': [('state', '=', 'draft')]}"/>
+                                    <field name="nianliang"  attrs="{'readonly': [('state', '!=', 'draft')], 'required': [('state', '=', 'draft')]}"/>
+                                    <field name="xueli"  attrs="{'readonly': [('state', '!=', 'draft')], 'required': [('state', '=', 'draft')]}"/>
+                                    <field name="zhuanyeyaoqiu"  attrs="{'readonly': [('state', '!=', 'draft')], 'required': [('state', '=', 'draft')]}"/>
+                                </group>
+                                <group string="上班模式">
+                                    <field name="changbaiban"  attrs="{'readonly': [('state', '!=', 'draft')], 'required': [('state', '=', 'draft')]}"/>
+                                    <field name="sanbaban"  attrs="{'readonly': [('state', '!=', 'draft')], 'required': [('state', '=', 'draft')]}"/>
+                                    <field name="shierershisi"  attrs="{'readonly': [('state', '!=', 'draft')], 'required': [('state', '=', 'draft')]}"/>
+                                    <field name="shiershier"  attrs="{'readonly': [('state', '!=', 'draft')], 'required': [('state', '=', 'draft')]}"/>
+                                    <field name="changbaibanjiaban"  attrs="{'readonly': [('state', '!=', 'draft')], 'required': [('state', '=', 'draft')]}"/>
+                                </group>
+                                </group>
+                                <group>
+                                    <field name="gangweizhize"  attrs="{'readonly': [('state', '!=', 'draft')], 'required': [('state', '=', 'draft')]}"/>
+                                    <field name="zuijiaxuanze"  attrs="{'readonly': [('state', '!=', 'draft')], 'required': [('state', '=', 'draft')]}"/>
+                                    <field name="yingxingtiaojian"  attrs="{'readonly': [('state', '!=', 'draft')], 'required': [('state', '=', 'draft')]}"/>
+                                    <field name="ruanxingtiaojian"  attrs="{'readonly': [('state', '!=', 'draft')], 'required': [('state', '=', 'draft')]}"/>
+                                </group>
+
+
+
+                            </page>
+
+                            <page string="需求部门信息">
+                                <group string="需求部门信息">
+                                    <field name="bumen"  attrs="{'readonly': [('state', '!=', 'draft')], 'required': [('state', '=', 'draft')]}"/>
+                                </group>
+                                <group string="部门人员"/>
+                                    <field name="bumenrenyuan"  attrs="{'readonly': [('state', '!=', 'draft')], 'required': [('state', '=', 'draft')]}"/>
+                                <group>
+                                    <field name="shenqingrenqianzi"  attrs="{'readonly': [('state', '!=', 'draft')], 'required': [('state', '=', 'draft')]}"/>
+                                    <field name="shenqingbumenbuzhangqianzi"  attrs="{'readonly': [('state', '!=', 'draft')], 'required': [('state', '=', 'draft')]}"/>
+                                </group>
+
+                            </page>
+
+                            <page string="分管副总审批">
+                                <group>
+                                    <field name="fenguanfuzongshenpi"  attrs="{'readonly': [('state', '!=', 'confirmed')], 'required': [('state', '=', 'confirmed')]}"/>
+                                </group>
+
+                            </page>
+
+                            <page string="总经理审批">
+                                <group>
+                                    <field name="zongjinglishenpi"  attrs="{'readonly': [('state', '!=', 'confirmedt')], 'required': [('state', '=', 'confirmedt')]}"/>
+                                </group>
+
+                            </page>
+
+                            <page string="人力资源部存档">
+                                <group>
+                                    <field name="renliziyuanshenpi"  attrs="{'readonly': [('state', '!=', 'confirmedh')], 'required': [('state', '=', 'confirmedh')]}"/>
+                                </group>
+
+                            </page>
+
+                            <page string="计划变动项目">
+                                <group>
+                                    <field name="jihuabiandongxiangmu"  attrs="{'readonly': [('state', '!=', 'confirmed')], 'required': [('state', '=', 'confirmed')]}"/>
+                                </group>
+
+                            </page>
+                        </notebook>
+
+                    </sheet>
+                    <div class="oe_chatter">
+                        <field name="message_follower_ids" widget="mail_followers" groups="base.group_user"/>
+                        <field name="message_ids" widget="mail_thread"/>
+                    </div>
+
+                </form>
+            </field>
+</record>
+
+        <record model="ir.ui.view" id="zhaopin_tree_view">
+            <field name="name">zhaopin.tree</field>
+            <field name="model">renlixuqiu</field>
+            <field name="arch" type="xml">
+                <tree string="人员需求确认单">
+                    <field name="zhiwei"/>
+                    <field name="renshu"/>
+                    <field name="riqi"/>
+                    <field name="zhijieshangji"/>
+                    <field name="xiwangdaogangshijian"/>
+                    <field name="xingbie"/>
+                    <field name="nianliang"/>
+                    <field name="xueli"/>
+                    <field name="zhuanyeyaoqiu"/>
+                    <field name="state"/>
+                </tree>
+            </field>
+        </record>
+
+
+        <record model="ir.ui.view" id="zhaopin_search_view">
+            <field name="name">zhaopin.search</field>
+            <field name="model">renlixuqiu</field>
+            <field name="arch" type="xml">
+                <search>
+                    <field name="zhiwei"/>
+                    <field name="renshu"/>
+                    <field name="riqi"/>
+                    <field name="zhijieshangji"/>
+                    <field name="xiwangdaogangshijian"/>
+                    <field name="xingbie"/>
+                    <field name="nianliang"/>
+                    <field name="xueli"/>
+                    <field name="zhuanyeyaoqiu"/>
+                    <field name="state"/>
+                </search>
+            </field>
+        </record>
+
+        <record model="ir.actions.act_window" id="zhaopin_form_action">
+            <field name="name">人员需求确认单</field>
+            <field name="res_model">renlixuqiu</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+            <field name="help" type="html">
+                <p class="oe_view_nocontent_create">点击创建人员需求确认单
+                </p>
+            </field>
+        </record>
+
+        <menuitem id="renlixuqiu_menu" name="人员需求确认单"
+                          parent="menu_hr_renlixuqiu"
+                          action="zhaopin_form_action"/>
+
+
+
+         <!--培训-->
+           <record model="ir.ui.view" id="peixun_form_view">
+            <field name="name">peixun.form</field>
+            <field name="model">peixun</field>
+            <field name="arch" type="xml">
+                <form string="培训记录表">
+                    <sheet string="培训记录表">
+                       <group string="培训记录表">
+                           <group>
+                               <field name="state" attrs="{'readonly':[('state','=','done')]}"/>
+                               <field name="peixunshijian" attrs="{'readonly':[('state','=','done')]}"/>
+                               <field name="peixunbumen" attrs="{'readonly':[('state','=','done')]}"/>
+                               <field name="peixundidian" attrs="{'readonly':[('state','=','done')]}"/>
+                           </group>
+                           <group>
+                               <field name="peixunjiangshi" attrs="{'readonly':[('state','=','done')]}"/>
+                               <field name="peixunzhuti" attrs="{'readonly':[('state','=','done')]}"/>
+                           </group>
+                       </group>
+                        <group>
+                            <field name="canjiapeixunrenyuan" help="手写，相当于签到" attrs="{'readonly':[('state','=','done')]}"/>
+                            <field name="peixunmudi"  attrs="{'readonly':[('state','=','done')]}"/>
+                            <field name="peixunneirongzhaiyao"  attrs="{'readonly':[('state','=','done')]}"/>
+                            <field name="peixunkaohejieguo"  attrs="{'readonly':[('state','=','done')]}"/>
+                            <field name="peixunxiaoguopingjia" help="人力资源部手写"  attrs="{'readonly':[('state','=','done')]}"/>
+                            <field name="beizhu"  attrs="{'readonly':[('state','=','done')]}"/>
+
+
+                        </group>
+
+                    </sheet>
+                </form>
+            </field>
+</record>
+
+        <record model="ir.ui.view" id="peixun_tree_view">
+            <field name="name">peixun.tree</field>
+            <field name="model">peixun</field>
+            <field name="arch" type="xml">
+                <tree string="培训记录表">
+                    <field name="peixunshijian"/>
+                    <field name="peixunbumen"/>
+                    <field name="peixundidian"/>
+                    <field name="peixunjiangshi"/>
+                    <field name="peixunzhuti"/>
+                    <field name="state"/>
+
+                </tree>
+            </field>
+        </record>
+
+
+        <record model="ir.ui.view" id="peixun_search_view">
+            <field name="name">peixun.search</field>
+            <field name="model">peixun</field>
+            <field name="arch" type="xml">
+                <search>
+                    <field name="peixunshijian"/>
+                    <field name="peixunbumen"/>
+                    <field name="peixundidian"/>
+                    <field name="peixunjiangshi"/>
+                    <field name="peixunzhuti"/>
+                </search>
+            </field>
+        </record>
+
+        <record model="ir.actions.act_window" id="peixun_form_action">
+            <field name="name">培训记录表</field>
+            <field name="res_model">peixun</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+            <field name="help" type="html">
+                <p class="oe_view_nocontent_create">点击创建培训记录表
+                </p>
+            </field>
+        </record>
+
+        <menuitem id="peixun_menu" name="培训记录表"
+                          parent="menu_hr_peixun"
+                          action="peixun_form_action"/>
+
+
+       <!--职责管理-->
+         <record model="ir.ui.view" id="zhize_form_view">
+            <field name="name">zhize.form</field>
+            <field name="model">zhize</field>
+            <field name="arch" type="xml">
+                <form string="培训记录表">
+                    <sheet>
+                        <group>
+                            <field name="name" attrs="{'readonly':[('state','=','done')]}"/>
+                            <field name="neirong" attrs="{'readonly':[('state','=','done')]}"/>
+                            <field name="shejiguocheng" attrs="{'readonly':[('state','=','done')]}"/>
+                            <field name="guochengbianhao" attrs="{'readonly':[('state','=','done')]}"/>
+                            <field name="state" attrs="{'readonly':[('state','=','done')]}"/>
+                        </group>
+
+
+                    </sheet>
+                </form>
+            </field>
+         </record>
+
+        <record model="ir.ui.view" id="zhize_tree_view">
+            <field name="name">zhize.tree</field>
+            <field name="model">zhize</field>
+            <field name="arch" type="xml">
+                <tree string="培训记录表">
+                   <field name="name"/>
+                    <field name="neirong"/>
+                    <field name="shejiguocheng"/>
+                    <field name="guochengbianhao"/>
+                    <field name="state"/>
+
+                </tree>
+            </field>
+        </record>
+
+
+        <!--<record model="ir.ui.view" id="peixun_search_view">-->
+            <!--<field name="name">peixun.search</field>-->
+            <!--<field name="model">peixun</field>-->
+            <!--<field name="arch" type="xml">-->
+                <!--<search>-->
+                    <!--<field name="peixunshijian"/>-->
+                    <!--<field name="peixunbumen"/>-->
+                    <!--<field name="peixundidian"/>-->
+                    <!--<field name="peixunjiangshi"/>-->
+                    <!--<field name="peixunzhuti"/>-->
+                <!--</search>-->
+            <!--</field>-->
+        <!--</record>-->
+
+        <record model="ir.actions.act_window" id="zhize_form_action">
+            <field name="name">zhize</field>
+            <field name="res_model">zhize</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+            <field name="help" type="html">
+                <p class="oe_view_nocontent_create">点击创建岗位职责
+                </p>
+            </field>
+        </record>
+
+        <menuitem id="zhize_menu" name="职责管理"
+                          parent="menu_hr_gangwei"
+                          action="zhize_form_action"/>
+        <!--岗位管理-->
+        <record model="ir.ui.view" id="gangwei_form_view">
+            <field name="name">gangwei.form</field>
+            <field name="model">gangwei</field>
+            <field name="arch" type="xml">
+                <form string="gangwei Form">
+                    <sheet>
+                        <group string="岗位基本信息">
+                        <group>
+                            <field name="name" attrs="{'readonly':[('state','=','done')]}"/>
+                            <field name="state" attrs="{'readonly':[('state','=','done')]}"/>
+                            <field name="dingbian" attrs="{'readonly':[('state','=','done')]}"/>
+                            <field name="guishubumen" attrs="{'readonly':[('state','=','done')]}"/>
+                            <field name="zhiweibianma" attrs="{'readonly':[('state','=','done')]}"/>
+                        </group>
+                        <group>
+                            <field name="zhiweijibie" attrs="{'readonly':[('state','=','done')]}"/>
+                            <field name="zhijieshangji" attrs="{'readonly':[('state','=','done')]}"/>
+                            <field name="zhijiexiaji" attrs="{'readonly':[('state','=','done')]}"/>
+                        </group>
+
+                    </group>
+                    <group>
+                        <group string="职位分类">
+                            <field name="guanlilei" attrs="{'readonly':[('state','=','done')]}"/>
+                            <field name="zhuanyelei" attrs="{'readonly':[('state','=','done')]}"/>
+                            <field name="xingzhenglei" attrs="{'readonly':[('state','=','done')]}"/>
+                            <field name="caozuolei" attrs="{'readonly':[('state','=','done')]}"/>
+                        </group>
+                        <group string="职群分类">
+                            <field name="zhanlueguanli" attrs="{'readonly':[('state','=','done')]}"/>
+                            <field name="caiwuguanli" attrs="{'readonly':[('state','=','done')]}"/>
+                            <field name="renliziyua" attrs="{'readonly':[('state','=','done')]}"/>
+                            <field name="jishukaifa" attrs="{'readonly':[('state','=','done')]}"/>
+                             <field name="shichangyingxiao" attrs="{'readonly':[('state','=','done')]}"/>
+                            <field name="shengchanzhizao" attrs="{'readonly':[('state','=','done')]}"/>
+                            <field name="zhiliangguanli" attrs="{'readonly':[('state','=','done')]}"/>
+                            <field name="xinxiguanli" attrs="{'readonly':[('state','=','done')]}"/>
+                             <field name="xingzhengzhichi" attrs="{'readonly':[('state','=','done')]}"/>
+                            <field name="gongyinlian" attrs="{'readonly':[('state','=','done')]}"/>
+                        </group>
+                    </group>
+                    <group string="职位设置目的">
+                        <field name="zhiweishezhimudi" attrs="{'readonly':[('state','=','done')]}"/>
+                    </group>
+                    <group string="关键协作关系">
+                        <field name="gongsineibu" attrs="{'readonly':[('state','=','done')]}"/>
+                        <field name="gongsiwaibu" attrs="{'readonly':[('state','=','done')]}"/>
+                    </group>
+                    <group string="培养方向">
+                        <field name="jinshenfangxiang" attrs="{'readonly':[('state','=','done')]}"/>
+                        <field name="lungangfanwei" attrs="{'readonly':[('state','=','done')]}"/>
+                    </group>
+                    <group string="关键职责"/>
+                   <field name="zhizeliebiao" attrs="{'readonly':[('state','=','done')]}"/>
+                    <group string="资格要求">
+                        <group string="教育要求">
+                            <field name="jiaoyuyaoqiu" attrs="{'readonly':[('state','=','done')]}"/>
+                            <field name="zhuanye" attrs="{'readonly':[('state','=','done')]}"/>
+                        </group>
+                        <group string="技能要求">
+                            <field name="lilunzhishi" attrs="{'readonly':[('state','=','done')]}"/>
+                            <field name="zhuanyejineng" attrs="{'readonly':[('state','=','done')]}"/>
+                        </group>
+                        <group string="经验要求">
+                            <field name="hangyejinyan" attrs="{'readonly':[('state','=','done')]}"/>
+                            <field name="gongsijinyanyaoqiu" attrs="{'readonly':[('state','=','done')]}"/>
+                        </group>
+                    </group>
+                    <group string="工作特征">
+                        <field name="chuchaiqingkuang" attrs="{'readonly':[('state','=','done')]}"/>
+                        <field name="zhuwai" attrs="{'readonly':[('state','=','done')]}"/>
+                        <field name="gongzuochangsuo" attrs="{'readonly':[('state','=','done')]}"/>
+                        <field name="beizhu" attrs="{'readonly':[('state','=','done')]}"/>
+                    </group>
+                    </sheet>
+
+                </form>
+            </field>
+        </record>
+
+        <record model="ir.ui.view" id="gangwei_tree_view">
+            <field name="name">gangwei.tree</field>
+            <field name="model">gangwei</field>
+            <field name="arch" type="xml">
+                <tree string="岗位">
+                    <field name="name"/>
+                    <field name="dingbian"/>
+                    <field name="guishubumen"/>
+                    <field name="zhiweibianma"/>
+                    <field name="zhiweijibie"/>
+                    <field name="zhijieshangji"/>
+                    <field name="zhijiexiaji"/>
+                    <field name="state"/>
+                </tree>
+            </field>
+        </record>
+
+
+        <record model="ir.ui.view" id="gangwei_search_view">
+            <field name="name">gangwei.search</field>
+            <field name="model">gangwei</field>
+            <field name="arch" type="xml">
+                <search>
+                      <field name="name"/>
+                        <field name="dingbian"/>
+                        <field name="guishubumen"/>
+                        <field name="zhiweibianma"/>
+                        <field name="zhiweijibie"/>
+                        <field name="zhijieshangji"/>
+                        <field name="zhijiexiaji"/>
+                        <field name="state"/>
+                </search>
+            </field>
+        </record>
+
+        <record model="ir.actions.act_window" id="gangwei_form_action">
+            <field name="name">岗位管理</field>
+            <field name="res_model">gangwei</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+            <field name="help" type="html">
+                <p class="oe_view_nocontent_create">点击创建岗位
+                </p>
+            </field>
+        </record>
+
+        <menuitem id="gangwei_menu" name="岗位管理"
+                  parent="menu_hr_gangwei"
+                  action="gangwei_form_action"/>
+
+        <!--职责 -->
+
+
+    </data>
+</odoo>
